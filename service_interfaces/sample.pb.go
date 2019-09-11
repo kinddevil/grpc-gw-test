@@ -179,9 +179,7 @@ func NewSampleServiceClient(cc *grpc.ClientConn) SampleServiceClient {
 
 func (c *sampleServiceClient) Sample(ctx context.Context, in *Request, opts ...grpc.CallOption) (*Reply, error) {
 	out := new(Reply)
-	fmt.Println("client call...")
 	err := c.cc.Invoke(ctx, "/services.SampleService/Sample", in, out, opts...)
-	fmt.Println(err)
 	if err != nil {
 		return nil, err
 	}
