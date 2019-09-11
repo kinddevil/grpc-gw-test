@@ -12,16 +12,16 @@ type Server func(chan<- func() error)
 
 func StartServers() {
 	servers := []struct {
-		name string
+		name   string
 		server Server
 		cancel CancelFun
-	}  {
+	}{
 		{
-			name: "grpc",
+			name:   "grpc",
 			server: ServeGRPC,
 		},
 		{
-			name: "rest",
+			name:   "rest",
 			server: ServeHttp,
 		},
 	}
@@ -39,7 +39,7 @@ func StartServers() {
 
 	log.Printf("Stopping service with sig %v", sig)
 
-	for i:=len(servers)-1; i >=0; i-- {
+	for i := len(servers) - 1; i >= 0; i-- {
 		server := servers[i]
 		if err := server.cancel; err != nil {
 			log.Printf("Stop server %v error %v", server.name, err)
