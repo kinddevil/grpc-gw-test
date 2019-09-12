@@ -1,0 +1,7 @@
+grpc:
+  port: ":50051"
+  max_connection_idle: 300 #seconds
+
+rest:
+  port: ":8081"
+  grpc_addr: "localhost:50051"
