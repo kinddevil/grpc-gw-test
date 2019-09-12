@@ -12,16 +12,11 @@ import (
 
 var (
 	cfgs               = configs.CONFIGS
-	//grpcPort           = cfgs.GetString("grpc.port")
-	//grpcServerEndpoint = cfgs.GetString("rest.grpc_addr")
+	grpcPort           = cfgs.GetString("rest.port")
+	grpcServerEndpoint = cfgs.GetString("rest.grpc_addr")
 )
 
 func ServeHttp(terminate chan<- func() error) {
-	log.Println(cfgs)
-	grpcPort           := cfgs.GetString("grpc.port")
-	grpcServerEndpoint := cfgs.GetString("rest.grpc_addr")
-
-
 	ctx := context.Background()
 	ctx, cancel := context.WithCancel(ctx)
 	defer cancel()

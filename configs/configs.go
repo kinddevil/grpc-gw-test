@@ -18,10 +18,10 @@ var (
 		},
 	}
 
-	CONFIGS *viper.Viper
+	CONFIGS = LoadConfigs()
 )
 
-func LoadConfigs() {
+func LoadConfigs() *viper.Viper {
 	env := flag.String("env", "dev", "environment: dev|staging|smoke|production|docker")
 	if !checkEnv(env) {
 		panic("Invalid environment")
@@ -29,8 +29,9 @@ func LoadConfigs() {
 	if config, err := loadConfigs("./resources", *env, DEFAULT_CONFIGS); err != nil {
 		log.Fatal(err)
 	} else {
-		CONFIGS = config
+		return config
 	}
+	return nil
 }
 
 func checkEnv(env *string) bool {
