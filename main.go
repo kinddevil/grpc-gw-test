@@ -2,12 +2,13 @@ package main
 
 import (
 	"grpc_tpl/configs"
+	"grpc_tpl/servers"
 	"log"
 )
 
 func main() {
 	// TODO load configs
-	configs.CONFIGS.LoadConfigs()
-	log.Println(configs.CONFIGS.Configs.GetString("grpc.port"))
-	//servers.StartServers()
+	configs.LoadConfigs()
+	log.Println(configs.CONFIGS.GetString("grpc.port"))
+	servers.StartServers()
 }

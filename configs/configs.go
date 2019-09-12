@@ -6,10 +6,6 @@ import (
 	"log"
 )
 
-type Config struct {
-	Configs *viper.Viper
-}
-
 var (
 	DEFAULT_CONFIGS = map[string]interface{}{
 		"grpc": map[string]interface{}{
@@ -22,10 +18,10 @@ var (
 		},
 	}
 
-	CONFIGS = &Config{}
+	CONFIGS *viper.Viper
 )
 
-func (configs *Config) LoadConfigs() {
+func LoadConfigs() {
 	env := flag.String("env", "dev", "environment: dev|staging|smoke|production|docker")
 	if !checkEnv(env) {
 		panic("Invalid environment")
@@ -33,7 +29,7 @@ func (configs *Config) LoadConfigs() {
 	if config, err := loadConfigs("./resources", *env, DEFAULT_CONFIGS); err != nil {
 		log.Fatal(err)
 	} else {
-		configs.Configs = config
+		CONFIGS = config
 	}
 }
 

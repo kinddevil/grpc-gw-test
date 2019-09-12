@@ -2,27 +2,31 @@ package servers
 
 import (
 	"context"
-	"flag"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"google.golang.org/grpc"
+	"grpc_tpl/configs"
 	pb "grpc_tpl/service_interfaces"
 	"log"
 	"net/http"
 )
 
 var (
-	// command-line options:
-	// gRPC server endpoint
-	grpcServerEndpoint = flag.String("grpc-server-endpoint", "localhost:50051", "gRPC server endpoint")
+	cfgs               = configs.CONFIGS
+	//grpcPort           = cfgs.GetString("grpc.port")
+	//grpcServerEndpoint = cfgs.GetString("rest.grpc_addr")
 )
 
 func ServeHttp(terminate chan<- func() error) {
+	log.Println(cfgs)
+	grpcPort           := cfgs.GetString("grpc.port")
+	grpcServerEndpoint := cfgs.GetString("rest.grpc_addr")
+
+
 	ctx := context.Background()
 	ctx, cancel := context.WithCancel(ctx)
 	defer cancel()
 
-	// TODO config the port
-	port := ":8081"
+	port := grpcPort
 
 	// Register gRPC server endpoint
 	// Note: Make sure the gRPC server is running properly and accessible
@@ -38,7 +42,7 @@ func ServeHttp(terminate chan<- func() error) {
 	}
 
 	// TODO pass the parameters like endpoint and opts
-	err := pb.RegisterSampleServiceHandlerFromEndpoint(ctx, mux, *grpcServerEndpoint, opts)
+	err := pb.RegisterSampleServiceHandlerFromEndpoint(ctx, mux, grpcServerEndpoint, opts)
 	if err != nil {
 		log.Fatal(err)
 	}
