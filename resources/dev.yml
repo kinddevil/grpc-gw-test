@@ -4,5 +4,5 @@ grpc:
   time_out: 7 # sec
 
 rest:
-  port: ":8082"
+  port: ":8081"
   grpc_addr: "localhost:50051"
