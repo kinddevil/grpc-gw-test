@@ -23,10 +23,7 @@ jobs:
       - run:
           name: Download packages
           command: |
-            if [ ! -d /go/src/github.com/your_company/your_app/vendor ]; then
-                curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
-                /go/bin/dep ensure
-            fi
+            dep ensure
       - save_cache:
           key: gopkg-{{ .Branch }}-{{ checksum "Gopkg.lock" }}
           paths:
