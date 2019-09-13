@@ -4,7 +4,7 @@ import (
 	"context"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/metadata"
-	pb "grpc_tpl/service_interfaces"
+	pb "grpc-gw-test/service_interfaces"
 	"log"
 	"time"
 )

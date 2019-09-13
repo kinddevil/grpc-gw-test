@@ -1,7 +1,7 @@
 package servers
 
 import (
-	"grpc_tpl/configs"
+	"grpc-gw-test/configs"
 	"log"
 	"os"
 	"os/signal"

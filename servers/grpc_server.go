@@ -3,9 +3,9 @@ package servers
 import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/keepalive"
-	"grpc_tpl/inspectors"
-	pb "grpc_tpl/service_interfaces"
-	"grpc_tpl/services"
+	"grpc-gw-test/inspectors"
+	pb "grpc-gw-test/service_interfaces"
+	"grpc-gw-test/services"
 	"log"
 	"net"
 	"time"

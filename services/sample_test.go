@@ -2,7 +2,7 @@ package services
 
 import (
 	"context"
-	pb "grpc_tpl/service_interfaces"
+	pb "grpc-gw-test/service_interfaces"
 	"testing"
 )
 

@@ -4,7 +4,7 @@ import (
 	"context"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"google.golang.org/grpc"
-	pb "grpc_tpl/service_interfaces"
+	pb "grpc-gw-test/service_interfaces"
 	"log"
 	"net/http"
 )

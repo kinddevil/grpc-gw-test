@@ -1,7 +1,7 @@
 package main
 
 import (
-	"grpc_tpl/servers"
+	"grpc-gw-test/servers"
 )
 
 func main() {
