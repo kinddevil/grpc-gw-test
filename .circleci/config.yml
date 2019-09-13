@@ -6,10 +6,45 @@ version: 2
 jobs:
   build:
     docker:
-      - image: alpine
+#      - image: golang:alpine
+      - image: golang:1.12
+        environment:
+          - GOCACHE: "/tmp/go/cache"
+          - DEP_VERSION: 0.5.4
 
-    working_directory: ./
+    working_directory: /go/src/github.com/kinddevil/grpc-gw-test
 
     steps:
       - checkout
-      - run: dep ensure
+      - restore_cache:
+            key: gopkg-{{ .Branch }}-{{ checksum "Gopkg.lock" }}
+            paths:
+              - /go/src/github.com/kinddevil/grpc-gw-test
+      - run:
+          name: Download packages
+          command: |
+            if [ ! -d /go/src/github.com/your_company/your_app/vendor ]; then
+                curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
+                /go/bin/dep ensure
+            fi
+      - save_cache:
+          key: gopkg-{{ .Branch }}-{{ checksum "Gopkg.lock" }}
+          paths:
+            - /go/src/github.com/kinddevil/grpc-gw-test
+      - restore_cache:
+          keys:
+            - build-cache-{{ .Branch }}-{{ .Environment.CIRCLE_PREVIOUS_BUILD_NUM }}
+          paths:
+            - /tmp/go/cache
+      - run:
+          name: Unit test
+          command: go test -v ./...
+
+#      - restore_cache: # restores saved cache if no changes are detected since last run
+#          keys:
+#            - go-mod-v4-{{ checksum "go.sum" }}
+#
+#      - save_cache:
+#          key: go-mod-v4-{{ checksum "go.sum" }}
+#          paths:
+#            - "/go/pkg/mod"
