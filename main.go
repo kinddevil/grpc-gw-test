@@ -5,6 +5,5 @@ import (
 )
 
 func main() {
-	// TODO pass flags to config
 	servers.StartServers()
 }
