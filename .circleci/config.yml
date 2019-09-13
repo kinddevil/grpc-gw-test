@@ -16,10 +16,6 @@ jobs:
 
     steps:
       - checkout
-      - restore_cache:
-            key: gopkg-{{ .Branch }}-{{ checksum "Gopkg.lock" }}
-            paths:
-              - /go/src/github.com/kinddevil/grpc-gw-test
       - run:
           name: Download packages
           command: |
