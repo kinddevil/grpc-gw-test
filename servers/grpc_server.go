@@ -1,11 +1,11 @@
 package servers
 
 import (
+	"github.com/kinddevil/grpc-gw-test/inspectors"
+	pb "github.com/kinddevil/grpc-gw-test/service_interfaces"
+	"github.com/kinddevil/grpc-gw-test/services"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/keepalive"
-	"grpc-gw-test/inspectors"
-	pb "grpc-gw-test/service_interfaces"
-	"grpc-gw-test/services"
 	"log"
 	"net"
 	"time"

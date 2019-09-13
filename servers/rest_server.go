@@ -3,8 +3,8 @@ package servers
 import (
 	"context"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
+	pb "github.com/kinddevil/grpc-gw-test/service_interfaces"
 	"google.golang.org/grpc"
-	pb "grpc-gw-test/service_interfaces"
 	"log"
 	"net/http"
 )
