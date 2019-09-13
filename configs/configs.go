@@ -23,6 +23,7 @@ var (
 
 func LoadConfigs() *viper.Viper {
 	env := flag.String("env", "dev", "environment: dev|staging|smoke|production|docker")
+	flag.Parse()
 	if !checkEnv(env) {
 		panic("Invalid environment")
 	}
