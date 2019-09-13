@@ -12,5 +12,5 @@
 *.out
 
 .idea
-Gopkg.lock
+# Gopkg.lock
 vendor/
