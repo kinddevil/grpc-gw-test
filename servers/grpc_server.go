@@ -11,12 +11,14 @@ import (
 	"time"
 )
 
-const (
-	port = ":50051"
+var (
+	grpcPort    = cfgs.GetString("grpc.port")
+	maxConnIdle = cfgs.GetInt("grpc.max_connection_idle")
+	timeOut     = cfgs.GetInt("grpc.time_out")
 )
 
 func ServeGRPC(terminate chan<- CancelFun) {
-	lis, err := net.Listen("tcp", port)
+	lis, err := net.Listen("tcp", grpcPort)
 
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
@@ -24,7 +26,8 @@ func ServeGRPC(terminate chan<- CancelFun) {
 
 	s := grpc.NewServer(
 		grpc.KeepaliveParams(keepalive.ServerParameters{
-			MaxConnectionIdle: 5 * time.Minute,
+			MaxConnectionIdle: time.Duration(maxConnIdle) * time.Second,
+			Timeout:           time.Duration(timeOut) * time.Second,
 		}),
 		grpc.UnaryInterceptor(
 			inspectors.MiddlewareFunc(inspectors.GetUserInfo),
@@ -36,7 +39,7 @@ func ServeGRPC(terminate chan<- CancelFun) {
 		return nil
 	}
 
-	log.Printf("start gRPC server with %v", port)
+	log.Printf("start gRPC server with %v", grpcPort)
 	pb.RegisterSampleServiceServer(s, &services.Server{})
 	if err := s.Serve(lis); err != nil {
 		log.Fatalf("failed to serve: %v", err)

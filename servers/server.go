@@ -1,6 +1,7 @@
 package servers
 
 import (
+	"grpc_tpl/configs"
 	"log"
 	"os"
 	"os/signal"
@@ -9,6 +10,10 @@ import (
 
 type CancelFun = func() error
 type Server func(chan<- func() error)
+
+var (
+	cfgs = configs.CONFIGS
+)
 
 func StartServers() {
 	servers := []struct {

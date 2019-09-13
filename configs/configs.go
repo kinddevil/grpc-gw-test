@@ -10,7 +10,8 @@ var (
 	DEFAULT_CONFIGS = map[string]interface{}{
 		"grpc": map[string]interface{}{
 			"port":                ":50051",
-			"max_connection_idle": "300",
+			"max_connection_idle": 300,
+			"time_out":            7,
 		},
 		"rest": map[string]interface{}{
 			"port":      ":8081",
@@ -27,6 +28,8 @@ func LoadConfigs() *viper.Viper {
 	if !checkEnv(env) {
 		panic("Invalid environment")
 	}
+	log.Printf("Init environments %v...", *env)
+
 	if config, err := loadConfigs("./resources", *env, DEFAULT_CONFIGS); err != nil {
 		log.Fatal(err)
 	} else {

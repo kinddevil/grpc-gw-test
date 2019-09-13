@@ -4,15 +4,13 @@ import (
 	"context"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"google.golang.org/grpc"
-	"grpc_tpl/configs"
 	pb "grpc_tpl/service_interfaces"
 	"log"
 	"net/http"
 )
 
 var (
-	cfgs               = configs.CONFIGS
-	grpcPort           = cfgs.GetString("rest.port")
+	restPort           = cfgs.GetString("rest.port")
 	grpcServerEndpoint = cfgs.GetString("rest.grpc_addr")
 )
 
@@ -20,8 +18,6 @@ func ServeHttp(terminate chan<- func() error) {
 	ctx := context.Background()
 	ctx, cancel := context.WithCancel(ctx)
 	defer cancel()
-
-	port := grpcPort
 
 	// Register gRPC server endpoint
 	// Note: Make sure the gRPC server is running properly and accessible
@@ -32,7 +28,7 @@ func ServeHttp(terminate chan<- func() error) {
 	}
 
 	s := &http.Server{
-		Addr:    port,
+		Addr:    restPort,
 		Handler: mux,
 	}
 
@@ -47,7 +43,7 @@ func ServeHttp(terminate chan<- func() error) {
 	}
 
 	// Start HTTP server (and proxy calls to gRPC server endpoint)
-	log.Printf("start service with %v", port)
+	log.Printf("start service with %v", restPort)
 
 	if err := s.ListenAndServe(); err != nil {
 		log.Fatal(err)

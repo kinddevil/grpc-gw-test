@@ -1,6 +1,7 @@
 grpc:
   port: ":50051"
   max_connection_idle: 300 #seconds
+  time_out: 7 # sec
 
 rest:
   port: ":8082"
