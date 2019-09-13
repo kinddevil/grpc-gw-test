@@ -47,7 +47,7 @@ func StartServers() {
 	for i := len(servers) - 1; i >= 0; i-- {
 		server := servers[i]
 		if err := server.cancel; err != nil {
-			log.Printf("Stop server %v error %v", server.name, err())
+			log.Printf("Stop server %v error %v", server.name, err)
 		}
 	}
 }
