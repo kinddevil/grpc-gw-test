@@ -16,23 +16,23 @@ jobs:
 
     steps:
       - checkout
-      - restore_cache:
-            key: gopkg-{{ .Branch }}-{{ checksum "Gopkg.lock" }}
-            paths:
-              - /go/src/github.com/kinddevil/grpc-gw-test/vendor
+#      - restore_cache:
+#            key: gopkg-{{ .Branch }}-{{ checksum "Gopkg.lock" }}
+#            paths:
+#              - /go/src/github.com/kinddevil/grpc-gw-test/vendor
       - run:
           name: Download packages
           command: |
             dep ensure
-      - save_cache:
-          key: gopkg-{{ .Branch }}-{{ checksum "Gopkg.lock" }}
-          paths:
-            - /go/src/github.com/kinddevil/grpc-gw-test/vendor
-      - restore_cache:
-          keys:
-            - build-cache-{{ .Branch }}-{{ .Environment.CIRCLE_PREVIOUS_BUILD_NUM }}
-          paths:
-            - /tmp/go/cache
+#      - save_cache:
+#          key: gopkg-{{ .Branch }}-{{ checksum "Gopkg.lock" }}
+#          paths:
+#            - /go/src/github.com/kinddevil/grpc-gw-test/vendor
+#      - restore_cache:
+#          keys:
+#            - build-cache-{{ .Branch }}-{{ .Environment.CIRCLE_PREVIOUS_BUILD_NUM }}
+#          paths:
+#            - /tmp/go/cache
       - run:
           name: Unit test
           command: go test -v ./...

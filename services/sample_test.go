@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func SampleTest(t *testing.T) {
+func TestSample(t *testing.T) {
 	s := Server{}
 
 	data := []struct {
