@@ -71,7 +71,7 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:dc1c4244821beda39cda5b6043c9da94fe057a6194b9a11f929a969135f1406d"
+  digest = "1:e491b9c871b5a28a14f10988cf4b68ef6804dda8a52a1a79f99743296c307adb"
   name = "github.com/kinddevil/grpc-gw-test"
   packages = [
     "configs",
@@ -81,7 +81,7 @@
     "services",
   ]
   pruneopts = "UT"
-  revision = "81ac73c9c9a9894a6f3d2a7e3384e2cc7db0eb9f"
+  revision = "7f96ccc12e222f3e2001c4563df20e19a1a7d85a"
 
 [[projects]]
   digest = "1:5a0ef768465592efca0412f7e838cdc0826712f8447e70e6ccc52eb441e9ab13"
@@ -167,11 +167,11 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:6465a0bb4bc14250ff15eeef30d436baa62aabccb803306a047865790fcf5297"
+  digest = "1:31ca8823684b4b0c204df1d4a9f3c511f41cc3e7ab6decc2ca5ffacc358d2818"
   name = "golang.org/x/sys"
   packages = ["unix"]
   pruneopts = "UT"
-  revision = "bc967efca4b87fb45e946a3ea4cb891883404fd0"
+  revision = "c3b328c6e5a763a2bfc82a48b4bd855037210934"
 
 [[projects]]
   digest = "1:8d8faad6b12a3a4c819a3f9618cb6ee1fa1cfc33253abeeea8b55336721e3405"
