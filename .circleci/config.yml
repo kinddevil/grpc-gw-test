@@ -34,6 +34,11 @@ jobs:
       #          paths:
       #            - /tmp/go/cache
       - run:
+          - command: echo pwd
+      - run:
+          - command: echo $GOPATH
+
+      - run:
           name: Unit test
           command: go test -v ./...
 
