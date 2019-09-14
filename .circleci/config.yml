@@ -34,7 +34,7 @@ jobs:
       #          paths:
       #            - /tmp/go/cache
       - run:
-          command: echo pwd
+          command: echo $PWD
       - run:
           command: echo $GOPATH
 
