@@ -40,6 +40,7 @@ jobs:
             echo Gopath - $GOPATH
             echo Move working dir to GOPATH/src
             mv $GOPATH/src/github.com/kinddevil/grpc-gw-test $GOPATH/src/
+            ls $GOPATH/src/
             echo Enter src/<project>
             cd $GOPATH/src/grpc-gw-test
 
