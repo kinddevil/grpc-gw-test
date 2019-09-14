@@ -41,7 +41,7 @@ jobs:
             echo Move working dir to GOPATH/src
             mv $GOPATH/src/github.com/kinddevil/grpc-gw-test $GOPATH/src/
             echo Enter src/<project>
-            cd $GOPATH/src/grpc-gw-test/
+            cd $GOPATH/src/grpc-gw-test
 
       - run:
           name: Unit test
