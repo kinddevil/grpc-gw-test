@@ -34,9 +34,11 @@ jobs:
       #          paths:
       #            - /tmp/go/cache
       - run:
-          command: echo $PWD
-      - run:
-          command: echo $GOPATH
+          name: Hack working dir
+          command: |
+            echo default working dir $PWD
+            echo gopath - $GOPATH
+            mv $GOPATH/src/github.com/kinddevil/grpc-gw-test $GOPATH/src/
 
       - run:
           name: Unit test
