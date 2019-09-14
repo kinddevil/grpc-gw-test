@@ -1,7 +1,7 @@
 package servers
 
 import (
-	"github.com/kinddevil/grpc-gw-test/configs"
+	"grpc-gw-test/configs"
 	"log"
 	"os"
 	"os/signal"

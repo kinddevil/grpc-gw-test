@@ -36,8 +36,9 @@ jobs:
       - run:
           name: Hack working dir
           command: |
-            echo default working dir $PWD
-            echo gopath - $GOPATH
+            echo Default working dir $PWD
+            echo Gopath - $GOPATH
+            echo Move working dir to GOPATH/src
             mv $GOPATH/src/github.com/kinddevil/grpc-gw-test $GOPATH/src/
 
       - run:

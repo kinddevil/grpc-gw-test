@@ -2,9 +2,9 @@ package main
 
 import (
 	"context"
-	pb "github.com/kinddevil/grpc-gw-test/service_interfaces"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/metadata"
+	pb "grpc-gw-test/service_interfaces"
 	"log"
 	"time"
 )

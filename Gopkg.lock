@@ -70,20 +70,6 @@
   version = "v1.0.0"
 
 [[projects]]
-  branch = "master"
-  digest = "1:e491b9c871b5a28a14f10988cf4b68ef6804dda8a52a1a79f99743296c307adb"
-  name = "github.com/kinddevil/grpc-gw-test"
-  packages = [
-    "configs",
-    "inspectors",
-    "servers",
-    "service_interfaces",
-    "services",
-  ]
-  pruneopts = "UT"
-  revision = "7f96ccc12e222f3e2001c4563df20e19a1a7d85a"
-
-[[projects]]
   digest = "1:5a0ef768465592efca0412f7e838cdc0826712f8447e70e6ccc52eb441e9ab13"
   name = "github.com/magiconair/properties"
   packages = ["."]
@@ -269,11 +255,6 @@
     "github.com/google/uuid",
     "github.com/grpc-ecosystem/grpc-gateway/runtime",
     "github.com/grpc-ecosystem/grpc-gateway/utilities",
-    "github.com/kinddevil/grpc-gw-test/configs",
-    "github.com/kinddevil/grpc-gw-test/inspectors",
-    "github.com/kinddevil/grpc-gw-test/servers",
-    "github.com/kinddevil/grpc-gw-test/service_interfaces",
-    "github.com/kinddevil/grpc-gw-test/services",
     "github.com/spf13/viper",
     "google.golang.org/genproto/googleapis/api/annotations",
     "google.golang.org/grpc",

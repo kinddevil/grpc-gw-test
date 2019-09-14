@@ -45,7 +45,3 @@
 [[constraint]]
   name = "github.com/google/uuid"
   version = "v1.1.1"
-
-[[constraint]]
-  name = "github.com/kinddevil/grpc-gw-test"
-  branch = "master"
