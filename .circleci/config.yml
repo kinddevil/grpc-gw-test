@@ -12,7 +12,9 @@ jobs:
           - GOCACHE: "/tmp/go/cache"
           - DEP_VERSION: 0.5.4
 
-    working_directory: /go/src/github.com/kinddevil/grpc-gw-test
+#    working_directory: /go/src/github.com/kinddevil/grpc-gw-test
+    working_directory: /go/src/grpc-gw-test
+
 
     steps:
       - checkout
@@ -20,6 +22,7 @@ jobs:
       #            key: gopkg-{{ .Branch }}-{{ checksum "Gopkg.lock" }}
       #            paths:
       #              - /go/src/github.com/kinddevil/grpc-gw-test/vendor
+
       - run:
           name: Download packages
           command: |
@@ -33,16 +36,6 @@ jobs:
       #            - build-cache-{{ .Branch }}-{{ .Environment.CIRCLE_PREVIOUS_BUILD_NUM }}
       #          paths:
       #            - /tmp/go/cache
-      - run:
-          name: Hack working dir
-          command: |
-            echo Default working dir $PWD
-            echo Gopath - $GOPATH
-            echo Move working dir to GOPATH/src
-            mv $GOPATH/src/github.com/kinddevil/grpc-gw-test $GOPATH/src/
-            ls $GOPATH/src/
-            echo Enter src/<project>
-            cd $GOPATH/src/grpc-gw-test
 
       - run:
           name: Unit test
