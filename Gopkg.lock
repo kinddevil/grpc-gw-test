@@ -10,6 +10,14 @@
   version = "v1.4.7"
 
 [[projects]]
+  branch = "master"
+  digest = "1:2db705378740bf6b42451c6b906faa8d2ba3e190a12af80afaa43b62971a7e54"
+  name = "github.com/golang/mock"
+  packages = ["gomock"]
+  pruneopts = "UT"
+  revision = "dd8d2a22370e4c8a334e80ca8477f71356c8e4bb"
+
+[[projects]]
   digest = "1:b532ee3f683c057e797694b5bfeb3827d89e6adf41c53dbc80e549bca76364ea"
   name = "github.com/golang/protobuf"
   packages = [
@@ -251,6 +259,7 @@
   analyzer-name = "dep"
   analyzer-version = 1
   input-imports = [
+    "github.com/golang/mock/gomock",
     "github.com/golang/protobuf/proto",
     "github.com/google/uuid",
     "github.com/grpc-ecosystem/grpc-gateway/runtime",

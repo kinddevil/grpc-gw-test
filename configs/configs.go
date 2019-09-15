@@ -1,7 +1,6 @@
 package configs
 
 import (
-	"flag"
 	"github.com/spf13/viper"
 	"log"
 )
@@ -19,19 +18,17 @@ var (
 		},
 	}
 
-	CONFIGS = LoadConfigs()
+	CONFIGS *viper.Viper
 )
 
-func LoadConfigs() *viper.Viper {
-	env := flag.String("env", "dev", "environment: dev|staging|smoke|production|docker")
-	flag.Parse()
+func LoadConfigs(env *string, configDir string) *viper.Viper {
 	if !checkEnv(env) {
 		panic("Invalid environment")
 	}
 	log.Printf("Init environments %v...", *env)
 
-	if config, err := loadConfigs("./resources", *env, DEFAULT_CONFIGS); err != nil {
-		log.Fatal(err)
+	if config, err := loadConfigs(configDir, *env, DEFAULT_CONFIGS); err != nil {
+		panic(err)
 	} else {
 		return config
 	}
@@ -58,7 +55,7 @@ func loadConfigs(path, filename string, defaults map[string]interface{}) (*viper
 	}
 	v.SetConfigName(filename)
 	v.AddConfigPath(path)
-	v.AutomaticEnv()
+	v.AutomaticEnv() // Use sys environment as default
 	err := v.ReadInConfig()
 	return v, err
 }

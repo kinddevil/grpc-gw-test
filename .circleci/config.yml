@@ -6,15 +6,12 @@ version: 2
 jobs:
   build:
     docker:
-      #      - image: golang:alpine
       - image: circleci/golang:1.12
         environment:
           - GOCACHE: "/tmp/go/cache"
           - DEP_VERSION: 0.5.4
 
-#    working_directory: /go/src/github.com/kinddevil/grpc-gw-test
     working_directory: /go/src/grpc-gw-test
-
 
     steps:
       - checkout
@@ -41,14 +38,18 @@ jobs:
             - /tmp/go/cache
 
       - run:
+          name: Static check
+          command: go vet -v ./...
+
+      - run:
           name: Unit test
           command: go test -v ./...
 
-#      - restore_cache: # restores saved cache if no changes are detected since last run
-#          keys:
-#            - go-mod-v4-{{ checksum "go.sum" }}
-#
-#      - save_cache:
-#          key: go-mod-v4-{{ checksum "go.sum" }}
-#          paths:
-#            - "/go/pkg/mod"
+#      - run:
+#          name: Coverage
+#          command: go test -cover
+
+      - run:
+          name: Benchmark
+          command: go test -bench=".*"
+

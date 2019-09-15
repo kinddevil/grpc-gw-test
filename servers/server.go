@@ -1,7 +1,7 @@
 package servers
 
 import (
-	"grpc-gw-test/configs"
+	"github.com/spf13/viper"
 	"log"
 	"os"
 	"os/signal"
@@ -9,13 +9,9 @@ import (
 )
 
 type CancelFun = func() error
-type Server func(chan<- func() error)
+type Server func(chan<- func() error, *viper.Viper)
 
-var (
-	cfgs = configs.CONFIGS
-)
-
-func StartServers() {
+func StartServers(cfgs *viper.Viper) {
 	servers := []struct {
 		name   string
 		server Server
@@ -33,7 +29,7 @@ func StartServers() {
 
 	for _, server := range servers {
 		cancelFunChan := make(chan CancelFun, 1)
-		go server.server(cancelFunChan)
+		go server.server(cancelFunChan, cfgs)
 		server.cancel = <-cancelFunChan
 	}
 

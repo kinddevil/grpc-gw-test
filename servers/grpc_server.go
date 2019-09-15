@@ -1,6 +1,7 @@
 package servers
 
 import (
+	"github.com/spf13/viper"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/keepalive"
 	"grpc-gw-test/inspectors"
@@ -11,13 +12,11 @@ import (
 	"time"
 )
 
-var (
-	grpcPort    = cfgs.GetString("grpc.port")
-	maxConnIdle = cfgs.GetInt("grpc.max_connection_idle")
-	timeOut     = cfgs.GetInt("grpc.time_out")
-)
+func ServeGRPC(terminate chan<- CancelFun, cfgs *viper.Viper) {
+	grpcPort := cfgs.GetString("grpc.port")
+	maxConnIdle := cfgs.GetInt("grpc.max_connection_idle")
+	timeOut := cfgs.GetInt("grpc.time_out")
 
-func ServeGRPC(terminate chan<- CancelFun) {
 	lis, err := net.Listen("tcp", grpcPort)
 
 	if err != nil {

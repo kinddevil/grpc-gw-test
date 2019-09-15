@@ -3,18 +3,17 @@ package servers
 import (
 	"context"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
+	"github.com/spf13/viper"
 	"google.golang.org/grpc"
 	pb "grpc-gw-test/service_interfaces"
 	"log"
 	"net/http"
 )
 
-var (
-	restPort           = cfgs.GetString("rest.port")
-	grpcServerEndpoint = cfgs.GetString("rest.grpc_addr")
-)
+func ServeHttp(terminate chan<- func() error, cfgs *viper.Viper) {
+	restPort := cfgs.GetString("rest.port")
+	grpcServerEndpoint := cfgs.GetString("rest.grpc_addr")
 
-func ServeHttp(terminate chan<- func() error) {
 	ctx := context.Background()
 	ctx, cancel := context.WithCancel(ctx)
 	defer cancel()

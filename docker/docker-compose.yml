@@ -1,0 +1,9 @@
+version: '3'
+services:
+  docker-service:
+    build: .
+    image: awesome-service
+    container_name: awesome-service-container
+    ports:
+      - 50051:50051
+      - 8081:8081
