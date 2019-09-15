@@ -3,6 +3,7 @@ package configs
 import (
 	"errors"
 	"github.com/golang/mock/gomock"
+	"github.com/stretchr/testify/mock"
 	"github.com/spf13/viper"
 	"log"
 	"testing"
@@ -26,13 +27,4 @@ func TestLoadConfigsSucc(t *testing.T) {
 	}()
 	LoadConfigs(&env,"whatever")
 
-	// Test read config error
-	oldLoadConfigs := loadConfigs
-	//defer func () {
-	//	loadConfigs = oldLoadConfigs
-	//}()
-	loadConfigs := func(path, filename string, defaults map[string]interface{}) (*viper.Viper, error) {
-		return nil, errors.New("Test read config with return error")
-	}
-	LoadConfigs(&env,"../resources")
 }

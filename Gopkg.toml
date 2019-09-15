@@ -47,5 +47,5 @@
   version = "v1.1.1"
 
 [[constraint]]
-  name = "github.com/golang/mock"
+  name = "github.com/vektra/mockery"
   branch = "master"
