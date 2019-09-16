@@ -38,8 +38,8 @@ func ServeHttp(terminate chan<- func() error, cfgs *viper.Viper) {
 	}
 
 	terminate <- func() error {
+		log.Println(ctx)
 		return s.Shutdown(ctx)
-		//return nil
 	}
 
 	// Start HTTP server (and proxy calls to gRPC server endpoint)
