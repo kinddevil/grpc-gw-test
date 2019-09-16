@@ -11,30 +11,29 @@ import (
 type CancelFun = func() error
 type Server func(chan<- func() error, *viper.Viper)
 type ServerInfo struct {
-	name   string
-	server Server
-	cancel CancelFun
+	Name   string
+	Server Server
+	Cancel CancelFun
 }
 
 var(
-	ServerList = []ServerInfo{
-		//{
-		//	name:   "grpc",
-		//	server: ServeGRPC,
-		//},
+	ServerList = []*ServerInfo{
 		{
-			name:   "rest",
-			server: ServeHttp,
+			Name:   "grpc",
+			Server: ServeGRPC,
+		},
+		{
+			Name:   "rest",
+			Server: ServeHttp,
 		},
 	}
 )
 
-func StartServers(cfgs *viper.Viper, servers []ServerInfo) error {
+func StartServers(cfgs *viper.Viper, servers []*ServerInfo) error {
 	for _, server := range servers {
 		cancelFunChan := make(chan CancelFun, 1)
-		go server.server(cancelFunChan, cfgs)
-		server.cancel = <-cancelFunChan
-		log.Printf("cancel func... %v", server.cancel)
+		go server.Server(cancelFunChan, cfgs)
+		server.Cancel = <-cancelFunChan
 	}
 
 	c := make(chan os.Signal, 1)
@@ -46,10 +45,8 @@ func StartServers(cfgs *viper.Viper, servers []ServerInfo) error {
 
 	for i := len(servers) - 1; i >= 0; i-- {
 		server := servers[i]
-		log.Println(server.name)
-		log.Println(server.cancel)
-		if err := server.cancel(); err != nil {
-			log.Printf("Stop server %v error %v", server.name, err)
+		if err := server.Cancel(); err != nil {
+			log.Printf("Stop server %v error %v", server.Name, err)
 			return err
 		}
 	}
