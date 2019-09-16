@@ -34,7 +34,7 @@ func ServeHttp(terminate chan<- func() error, cfgs *viper.Viper) {
 	// TODO pass the parameters like endpoint and opts
 	err := pb.RegisterSampleServiceHandlerFromEndpoint(ctx, mux, grpcServerEndpoint, opts)
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 
 	terminate <- func() error {
@@ -45,6 +45,6 @@ func ServeHttp(terminate chan<- func() error, cfgs *viper.Viper) {
 	log.Printf("start service with %v", restPort)
 
 	if err := s.ListenAndServe(); err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 }

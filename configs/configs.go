@@ -32,7 +32,6 @@ func LoadConfigs(env *string, configDir string) *viper.Viper {
 	} else {
 		return config
 	}
-	return nil
 }
 
 func checkEnv(env *string) bool {
