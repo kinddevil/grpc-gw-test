@@ -16,7 +16,7 @@ type ServerInfo struct {
 	Cancel CancelFun
 }
 
-var(
+var (
 	ServerList = []*ServerInfo{
 		{
 			Name:   "grpc",
@@ -37,8 +37,7 @@ func StartServers(cfgs *viper.Viper, servers []*ServerInfo) error {
 	}
 
 	c := make(chan os.Signal, 1)
-	signal.Notify(c, os.Interrupt)
-	signal.Notify(c, syscall.SIGTERM)
+	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
 	sig := <-c
 
 	log.Printf("Stopping service with sig %v", sig)

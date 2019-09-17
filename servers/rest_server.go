@@ -38,7 +38,6 @@ func ServeHttp(terminate chan<- func() error, cfgs *viper.Viper) {
 	}
 
 	terminate <- func() error {
-		log.Println(ctx)
 		return s.Shutdown(ctx)
 	}
 
@@ -46,6 +45,7 @@ func ServeHttp(terminate chan<- func() error, cfgs *viper.Viper) {
 	log.Printf("start service with %v", restPort)
 
 	if err := s.ListenAndServe(); err != nil {
-		panic(err)
+		// Will return error after server shutdown, just log for it
+		log.Printf("Shutdown server error - %v", err)
 	}
 }

@@ -20,7 +20,6 @@ func TestServeHttp(t *testing.T) {
 		t.Errorf("Test http proxy error - %v", err)
 	}
 
-	// TODO why error when shutdown the listener
-	//terminateFunc := <-terminate
-	//terminateFunc()
+	terminateFunc := <-terminate
+	terminateFunc()
 }
