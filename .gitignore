@@ -14,3 +14,6 @@
 .idea
 # Gopkg.lock
 vendor/
+cover.out
+cover.html
+reports/

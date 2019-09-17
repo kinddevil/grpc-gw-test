@@ -38,6 +38,10 @@ jobs:
             - /tmp/go/cache
 
       - run:
+          name: Format check
+          command: go fmt -v ./...
+
+      - run:
           name: Static check
           command: go vet -v ./...
 

@@ -46,6 +46,6 @@ func ServeHttp(terminate chan<- func() error, cfgs *viper.Viper) {
 
 	if err := s.ListenAndServe(); err != nil {
 		// Will return error after server shutdown, just log for it
-		log.Printf("Shutdown server error - %v", err)
+		log.Printf("Shutdown server warning - %v", err)
 	}
 }
