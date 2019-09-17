@@ -43,11 +43,7 @@ jobs:
 
       - run:
           name: Unit test
-          command: go test -v ./...
-
-#      - run:
-#          name: Coverage
-#          command: go test -cover
+          command: go test -cover -v ./...
 
       - run:
           name: Benchmark
