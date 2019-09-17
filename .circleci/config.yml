@@ -39,7 +39,7 @@ jobs:
 
       - run:
           name: Format check
-          command: go fmt -v ./...
+          command: go fmt ./...
 
       - run:
           name: Static check
