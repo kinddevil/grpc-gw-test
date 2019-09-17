@@ -38,10 +38,6 @@ jobs:
             - /tmp/go/cache
 
       - run:
-          name: Format check
-          command: go fmt ./...
-
-      - run:
           name: Static check
           command: go vet -v ./...
 
@@ -49,7 +45,7 @@ jobs:
           name: Unit test
           command: go test -cover -v ./...
 
-      - run:
-          name: Benchmark
-          command: go test -bench=".*"
+#      - run:
+#          name: Benchmark
+#          command: go test -bench=".*"
 
