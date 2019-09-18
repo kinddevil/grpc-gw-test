@@ -45,3 +45,7 @@
 [[constraint]]
   name = "github.com/google/uuid"
   version = "v1.1.1"
+
+[[constraint]]
+  name = "go.etcd.io/etcd"
+  branch = "master"
