@@ -13,37 +13,34 @@ import (
 //	Resolve(target string) (Watcher, error)
 //}
 
+type Resolver struct {
+	rawAddr string
+	cc      resolver.ClientConn
+}
+
 type ClientConn struct {}
 
-func (cc *ClientConn) UpdateState(resolver.State) {
-
+func NewResolver(addr string) resolver.Builder {
+	return Resolver{rawAddr: addr}
 }
 
-func (cc *ClientConn) NewAddress(addresses []resolver.Address) {
+func (r *Resolver) UpdateState(resolver.State) {}
 
-}
+func (r *Resolver) NewAddress(addresses []resolver.Address) {}
 
-func (cc *ClientConn) NewServiceConfig(serviceConfig string) {}
-
-type Resolver struct {
-
-}
+func (r *Resolver) NewServiceConfig(serviceConfig string) {}
 
 func (r *Resolver) ResolveNow(resolver.ResolveNowOption) {}
 
 func (r *Resolver) Close() {}
 
-type Builder struct {
-
-}
-
-func (b *Builder) Build(target resolver.Target, cc ClientConn, opts resolver.BuildOption) (Resolver, error) {
+func (r *Resolver) Build(target resolver.Target, cc ClientConn, opts resolver.BuildOption) (Resolver, error) {
 	return Resolver{}, nil
 }
 
-func (b *Builder) Scheme() string { return "" }
+func (r *Resolver) Scheme() string { return "" }
 
-func (resolver *Resolver) Resolve(target string) {
+func (r *Resolver) Resolve(target string) {
 
 	cli, err := etcv3.New(etcv3.Config{
 		Endpoints:   []string{target},
