@@ -9,7 +9,6 @@ import (
 
 func TestResolve(t *testing.T) {
 	target := "http://localhost:2379"
-	Resolve(target)
 
 	cli, err := etcv3.New(etcv3.Config{
 		Endpoints:   []string{target},
