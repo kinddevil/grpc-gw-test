@@ -59,7 +59,6 @@ func (r *IResolver) Build(target resolver.Target, cc resolver.ClientConn, opts r
 	go r.watch("/" + target.Scheme + "/" + target.Endpoint + "/")
 
 	return r, nil
-	return &IResolver{}, nil
 }
 
 func (r *IResolver) watch(keyPrefix string) {
