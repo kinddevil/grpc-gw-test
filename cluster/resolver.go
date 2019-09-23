@@ -10,6 +10,12 @@ import (
 	"time"
 )
 
+const (
+	SCHEMA = "GRPC_V3_LB"
+
+	CLIENT_TIME_OUT = 15 // seconds
+)
+
 var cli *etcv3.Client
 
 type BaseResolver interface {
@@ -47,7 +53,7 @@ func (r *IResolver) Build(target resolver.Target, cc resolver.ClientConn, opts r
 	if cli == nil {
 		cli, err = etcv3.New(etcv3.Config{
 			Endpoints:   strings.Split(r.rawAddr, ";"),
-			DialTimeout: 15 * time.Second,
+			DialTimeout: CLIENT_TIME_OUT * time.Second,
 		})
 		if err != nil {
 			return nil, err
@@ -62,7 +68,7 @@ func (r *IResolver) Build(target resolver.Target, cc resolver.ClientConn, opts r
 }
 
 func (r *IResolver) watch(keyPrefix string) {
-	var addrList []resolver.Address
+	addrList := make([]resolver.Address, 0, 1)
 
 	getResp, err := cli.Get(context.Background(), keyPrefix, etcv3.WithPrefix())
 	if err != nil {
@@ -94,7 +100,7 @@ func (r *IResolver) watch(keyPrefix string) {
 					//r.cc.UpdateState(resolver.State{Addresses: addrList})
 				}
 			}
-			//log.Printf("%s %q : %q\n", ev.Type, ev.Kv.Key, ev.Kv.Value)
+			log.Printf("%s %q : %q\n", ev.Type, ev.Kv.Key, ev.Kv.Value)
 		}
 	}
 }
