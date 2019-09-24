@@ -1,9 +1,11 @@
 package servers
 
 import (
+	"fmt"
 	"github.com/spf13/viper"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/keepalive"
+	"grpc-gw-test/balancer"
 	"grpc-gw-test/inspectors"
 	pb "grpc-gw-test/service_interfaces"
 	"grpc-gw-test/services"
@@ -12,10 +14,20 @@ import (
 	"time"
 )
 
+const (
+	LB_TTL = 10 // seconds
+)
+
 func ServeGRPC(terminate chan<- CancelFun, cfgs *viper.Viper) {
-	grpcPort := cfgs.GetString("grpc.port")
+	grpcHost := cfgs.GetString("grpc.host") // xx.xx.xx.xx
+	grpcPort := cfgs.GetString("grpc.port") // :xxx
+	addr := fmt.Sprintf("%v%v", grpcHost, grpcPort)
+
 	maxConnIdle := cfgs.GetInt("grpc.max_connection_idle")
 	timeOut := cfgs.GetInt("grpc.time_out")
+
+	etcdAddr := cfgs.GetString("common.etcd_addrs")
+	servName := cfgs.GetString("common.service_name")
 
 	lis, err := net.Listen("tcp", grpcPort)
 
@@ -33,7 +45,11 @@ func ServeGRPC(terminate chan<- CancelFun, cfgs *viper.Viper) {
 		),
 	)
 
+	// Register service
+	balancer.Register(etcdAddr, servName, addr, LB_TTL)
+
 	terminate <- func() error {
+		balancer.UnRegister(servName, addr)
 		s.Stop()
 		return nil
 	}

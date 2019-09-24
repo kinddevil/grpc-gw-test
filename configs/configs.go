@@ -7,7 +7,12 @@ import (
 
 var (
 	DEFAULT_CONFIGS = map[string]interface{}{
+		"common": map[string]interface{}{
+			"service_name": "grpc-gw",
+			"etcd_addrs":    "127.0.0.1:2379",
+		},
 		"grpc": map[string]interface{}{
+			"host":                "127.0.0.1",
 			"port":                ":50051",
 			"max_connection_idle": 300,
 			"time_out":            7,

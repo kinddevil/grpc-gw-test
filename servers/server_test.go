@@ -41,7 +41,7 @@ func TestStartServers(t *testing.T) {
 		{
 			Name: "fail",
 			Server: func(terminate chan<- func() error, cfg *viper.Viper) {
-				terminate <- func() error { return errors.New("terminate error test") }
+				terminate <- func() error { return errors.New("Terminate error test") }
 			},
 		},
 	})

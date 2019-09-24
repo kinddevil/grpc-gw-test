@@ -11,6 +11,8 @@ jobs:
           - GOCACHE: "/tmp/go/cache"
           - DEP_VERSION: 0.5.4
 
+      - image: bitnami/etcd:latest
+
     working_directory: /go/src/grpc-gw-test
 
     steps:
