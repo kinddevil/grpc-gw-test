@@ -13,7 +13,7 @@ jobs:
 
       - image: bitnami/etcd:latest
         environment:
-          - ALLOW_NONE_AUTHENTICATION: yes
+          - ALLOW_NONE_AUTHENTICATION: 'yes'
 
     working_directory: /go/src/grpc-gw-test
 
