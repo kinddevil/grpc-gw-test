@@ -12,6 +12,8 @@ jobs:
           - DEP_VERSION: 0.5.4
 
       - image: bitnami/etcd:latest
+        environment:
+          - ALLOW_NONE_AUTHENTICATION: yes
 
     working_directory: /go/src/grpc-gw-test
 
