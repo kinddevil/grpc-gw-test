@@ -344,12 +344,14 @@
     "github.com/grpc-ecosystem/grpc-gateway/utilities",
     "github.com/spf13/viper",
     "go.etcd.io/etcd/clientv3",
+    "go.etcd.io/etcd/mvcc/mvccpb",
     "google.golang.org/genproto/googleapis/api/annotations",
     "google.golang.org/grpc",
     "google.golang.org/grpc/codes",
     "google.golang.org/grpc/grpclog",
     "google.golang.org/grpc/keepalive",
     "google.golang.org/grpc/metadata",
+    "google.golang.org/grpc/resolver",
     "google.golang.org/grpc/status",
   ]
   solver-name = "gps-cdcl"
