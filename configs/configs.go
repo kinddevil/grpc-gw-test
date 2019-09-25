@@ -9,7 +9,7 @@ var (
 	DEFAULT_CONFIGS = map[string]interface{}{
 		"common": map[string]interface{}{
 			"service_name": "grpc-gw",
-			"etcd_addrs":    "127.0.0.1:2379",
+			"etcd_addrs":   "127.0.0.1:2379",
 		},
 		"grpc": map[string]interface{}{
 			"host":                "127.0.0.1",

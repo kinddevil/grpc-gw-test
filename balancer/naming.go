@@ -76,7 +76,7 @@ UnRegister remove service from etcd
 */
 func UnRegister(name string, addr string) {
 	if cli != nil {
-		key := "/"+SCHEMA+"/"+name+"/"+addr
+		key := "/" + SCHEMA + "/" + name + "/" + addr
 		if _, err := cli.Delete(context.Background(), key); err != nil {
 			log.Printf("Delete etcd server config error %v for key %v", err, key)
 		}
