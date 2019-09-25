@@ -9,6 +9,10 @@ import (
 	"time"
 )
 
+const (
+	SCHEMA = "GRPC_V3_LB"
+)
+
 /**
 	Register register service with name as prefix to etcd, multi etcd addr should use ; to split
 **/
@@ -27,6 +31,7 @@ func Register(etcdAddr, name, addr string, ttl int64) error {
 
 	ticker := time.NewTicker(time.Second * time.Duration(ttl))
 
+	// TODO close at exist
 	go func() {
 		key := "/" + SCHEMA + "/" + name + "/" + addr
 		for {
@@ -62,11 +67,9 @@ func withAlive(name string, addr string, ttl int64) error {
 		return err
 	}
 
-	resp, err := cli.KeepAlive(context.Background(), leaseResp.ID)
+	_, err = cli.KeepAlive(context.Background(), leaseResp.ID)
 	if err != nil {
 		return err
-	} else {
-		<-resp
 	}
 	return nil
 }

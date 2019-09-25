@@ -11,9 +11,7 @@ import (
 )
 
 const (
-	SCHEMA = "GRPC_V3_LB"
-
-	CLIENT_TIME_OUT = 15 // seconds
+	CLIENT_TIME_OUT = 5 // seconds
 )
 
 var cli *etcv3.Client
@@ -30,8 +28,6 @@ type IResolver struct {
 	cc      resolver.ClientConn
 	state   resolver.State
 }
-
-type IClientConn struct{}
 
 func NewResolver(addr string) resolver.Builder {
 	return &IResolver{rawAddr: addr}
@@ -62,14 +58,15 @@ func (r *IResolver) Build(target resolver.Target, cc resolver.ClientConn, opts r
 
 	r.cc = cc
 
-	go r.watch("/" + target.Scheme + "/" + target.Endpoint + "/")
+	go watch(r, "/"+target.Scheme+"/"+target.Endpoint+"/")
 
 	return r, nil
 }
 
-func (r *IResolver) watch(keyPrefix string) {
+func watch(r *IResolver, keyPrefix string) {
 	addrList := make([]resolver.Address, 0, 1)
 
+	log.Printf("get key from resolver %v", keyPrefix)
 	getResp, err := cli.Get(context.Background(), keyPrefix, etcv3.WithPrefix())
 	if err != nil {
 		log.Println(err)
@@ -83,6 +80,7 @@ func (r *IResolver) watch(keyPrefix string) {
 	//r.cc.UpdateState(resolver.State{Addresses: addrList})
 
 	rch := cli.Watch(context.Background(), keyPrefix, etcv3.WithPrefix())
+	// TODO close when existing
 	for n := range rch {
 		for _, ev := range n.Events {
 			addr := strings.TrimPrefix(string(ev.Kv.Key), keyPrefix)
@@ -124,25 +122,4 @@ func remove(s []resolver.Address, addr string) ([]resolver.Address, bool) {
 	return nil, false
 }
 
-func (r *IResolver) Scheme() string { return "" }
-
-func (r *IResolver) Resolve(target string) {
-
-	cli, err := etcv3.New(etcv3.Config{
-		Endpoints:   []string{target},
-		DialTimeout: 2 * time.Second,
-	})
-
-	if err == nil {
-		// handle errors
-	}
-
-	defer cli.Close()
-
-	//ctx, cancel := context.WithTimeout(context.Background(), time.Second)
-	//defer cancel()
-	_, err = cli.Put(context.TODO(), "foo", "bar")
-	if err != nil {
-		log.Fatal(err)
-	}
-}
+func (r *IResolver) Scheme() string { return SCHEMA }
