@@ -1,9 +1,10 @@
-package balancer
+package cluster
 
 import (
 	"context"
 	etcv3 "go.etcd.io/etcd/clientv3"
 	"go.etcd.io/etcd/mvcc/mvccpb"
+	"google.golang.org/grpc/naming"
 	"google.golang.org/grpc/resolver"
 	"log"
 	"strings"
@@ -20,17 +21,18 @@ type BaseResolver interface {
 	Build(target resolver.Target, cc resolver.ClientConn, opts resolver.BuildOption) (resolver.Resolver, error)
 	Scheme() string
 	ResolveNow(resolver.ResolveNowOption)
+	Resolve(target string) (naming.Watcher, error)
 	Close()
 }
 
 type IResolver struct {
-	rawAddr string
+	RawAddr string
 	cc      resolver.ClientConn
 	state   resolver.State
 }
 
 func NewResolver(addr string) resolver.Builder {
-	return &IResolver{rawAddr: addr}
+	return &IResolver{RawAddr: addr}
 }
 
 func (r *IResolver) UpdateState(resolver.State) {}
@@ -48,7 +50,7 @@ func (r *IResolver) Build(target resolver.Target, cc resolver.ClientConn, opts r
 
 	if cli == nil {
 		cli, err = etcv3.New(etcv3.Config{
-			Endpoints:   strings.Split(r.rawAddr, ";"),
+			Endpoints:   strings.Split(r.RawAddr, ";"),
 			DialTimeout: CLIENT_TIME_OUT * time.Second,
 		})
 		if err != nil {
@@ -123,3 +125,5 @@ func remove(s []resolver.Address, addr string) ([]resolver.Address, bool) {
 }
 
 func (r *IResolver) Scheme() string { return SCHEMA }
+
+func (r *IResolver) Resolve(target string) (naming.Watcher, error) { return nil, nil}

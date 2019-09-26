@@ -5,7 +5,7 @@ import (
 	"github.com/spf13/viper"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/keepalive"
-	"grpc-gw-test/balancer"
+	"grpc-gw-test/cluster"
 	"grpc-gw-test/inspectors"
 	pb "grpc-gw-test/service_interfaces"
 	"grpc-gw-test/services"
@@ -46,10 +46,10 @@ func ServeGRPC(terminate chan<- CancelFun, cfgs *viper.Viper) {
 	)
 
 	// Register service
-	balancer.Register(etcdAddr, servName, addr, LB_TTL)
+	cluster.Register(etcdAddr, servName, addr, LB_TTL)
 
 	terminate <- func() error {
-		balancer.UnRegister(servName, addr)
+		cluster.UnRegister(servName, addr)
 		s.Stop()
 		return nil
 	}

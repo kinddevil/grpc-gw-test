@@ -1,4 +1,4 @@
-package balancer
+package cluster
 
 import (
 	"google.golang.org/grpc/resolver"
