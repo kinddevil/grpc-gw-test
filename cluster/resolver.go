@@ -25,27 +25,27 @@ type BaseResolver interface {
 	Close()
 }
 
-type IResolver struct {
+type CBuilder struct {
 	RawAddr string
 	cc      resolver.ClientConn
 	state   resolver.State
 }
 
 func NewResolver(addr string) resolver.Builder {
-	return &IResolver{RawAddr: addr}
+	return &CBuilder{RawAddr: addr}
 }
 
-func (r *IResolver) UpdateState(resolver.State) {}
+func (r *CBuilder) UpdateState(resolver.State) {}
 
-func (r *IResolver) NewAddress(addresses []resolver.Address) {}
+func (r *CBuilder) NewAddress(addresses []resolver.Address) {}
 
-func (r *IResolver) NewServiceConfig(serviceConfig string) {}
+func (r *CBuilder) NewServiceConfig(serviceConfig string) {}
 
-func (r *IResolver) ResolveNow(resolver.ResolveNowOption) {}
+func (r *CBuilder) ResolveNow(resolver.ResolveNowOption) {}
 
-func (r *IResolver) Close() {}
+func (r *CBuilder) Close() {}
 
-func (r *IResolver) Build(target resolver.Target, cc resolver.ClientConn, opts resolver.BuildOption) (resolver.Resolver, error) {
+func (r *CBuilder) Build(target resolver.Target, cc resolver.ClientConn, opts resolver.BuildOption) (resolver.Resolver, error) {
 	var err error
 
 	if cli == nil {
@@ -65,7 +65,7 @@ func (r *IResolver) Build(target resolver.Target, cc resolver.ClientConn, opts r
 	return r, nil
 }
 
-func watch(r *IResolver, keyPrefix string) {
+func watch(r *CBuilder, keyPrefix string) {
 	addrList := make([]resolver.Address, 0, 1)
 
 	log.Printf("get key from resolver %v", keyPrefix)
@@ -124,6 +124,6 @@ func remove(s []resolver.Address, addr string) ([]resolver.Address, bool) {
 	return nil, false
 }
 
-func (r *IResolver) Scheme() string { return SCHEMA }
+func (r *CBuilder) Scheme() string { return SCHEMA }
 
-func (r *IResolver) Resolve(target string) (naming.Watcher, error) { return nil, nil}
+func (r *CBuilder) Resolve(target string) (naming.Watcher, error) { return nil, nil}

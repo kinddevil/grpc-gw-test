@@ -28,8 +28,8 @@ func TestServeGRPC(t *testing.T) {
 func testGrpcClient(t *testing.T, address string) {
 	// Set up a connection to the server.
 
-	//r := cluster.NewResolver("grpc-gw")
-	r := &cluster.IResolver{RawAddr: "grpc-gw"}
+	r := cluster.NewResolver("grpc-gw")
+	//r := &cluster.IResolver{RawAddr: "grpc-gw"}
 
 	b := grpc.RoundRobin(r)
 
