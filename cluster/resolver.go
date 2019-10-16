@@ -126,4 +126,4 @@ func remove(s []resolver.Address, addr string) ([]resolver.Address, bool) {
 
 func (r *CBuilder) Scheme() string { return SCHEMA }
 
-func (r *CBuilder) Resolve(target string) (naming.Watcher, error) { return nil, nil}
+func (r *CBuilder) Resolve(target string) (naming.Watcher, error) { return nil, nil }
