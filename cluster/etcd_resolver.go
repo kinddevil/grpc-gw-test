@@ -13,8 +13,29 @@ const (
 	Schema = "/GRPC/ETCD"
 )
 
+var (
+	cli *etcv3.Client
+)
+
 func NewBuilder(targets []string) resolver.Builder {
+	if err := initCli(targets); err != nil {
+		panic(err)
+	}
 	return &etcdBuilder{targets: targets}
+}
+
+func initCli(targets []string) error {
+	if cli == nil {
+		var err error
+		cli, err = etcv3.New(etcv3.Config{
+			Endpoints:   targets,
+			DialTimeout: 2 * time.Second, // TODO config dial timeout
+		})
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 type etcdBuilder struct {
@@ -22,10 +43,15 @@ type etcdBuilder struct {
 }
 
 func (b *etcdBuilder) Build(target resolver.Target, cc resolver.ClientConn, opts resolver.BuildOption) (resolver.Resolver, error) {
-	log.Println("in etcd builder...")
 	log.Println(target.Endpoint)
 	log.Println(target.Scheme)
-	log.Println(target.Authority)
+
+	key := target.Scheme + "/" + target.Endpoint
+
+	res, err := cli.Get(context.Background(), key, etcv3.WithPrefix())
+	if err != nil {
+		//t.Fatal(err)
+	}
 
 	//configTargets := strings.Split(strings.ReplaceAll(target.Endpoint," ",""), ",")
 
