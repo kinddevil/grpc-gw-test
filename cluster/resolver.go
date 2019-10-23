@@ -15,8 +15,6 @@ const (
 	CLIENT_TIME_OUT = 5 // seconds
 )
 
-var cli *etcv3.Client
-
 type BaseResolver interface {
 	Build(target resolver.Target, cc resolver.ClientConn, opts resolver.BuildOption) (resolver.Resolver, error)
 	Scheme() string
