@@ -2,6 +2,7 @@ package cluster
 
 import (
 	"context"
+	"fmt"
 	etcv3 "go.etcd.io/etcd/clientv3"
 	"log"
 	"strings"
@@ -29,7 +30,7 @@ func Register(etcdAddr, name, addr string, ttl int64) error {
 		}
 	}
 
-	ticker := time.NewTicker(time.Second * time.Duration(ttl))
+	ticker := time.NewTicker(time.Second * time.Duration(ttl - 2))
 
 	// TODO close at exist
 	go func() {
@@ -68,10 +69,18 @@ func withAlive(name string, addr string, ttl int64) error {
 		return err
 	}
 
-	_, err = cli.KeepAlive(ctx, leaseResp.ID)
+	ch, err := cli.KeepAlive(ctx, leaseResp.ID)
 	if err != nil {
 		return err
 	}
+
+	go func() {
+		for {
+			ka := <-ch
+			fmt.Println("ttl:", ka.TTL)
+		}
+	} ()
+
 	return nil
 }
 
