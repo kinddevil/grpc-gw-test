@@ -22,7 +22,6 @@ func TestResolve(t *testing.T) {
 		SCHEMA+":///grpc-gw/",
 		grpc.WithInsecure(),
 		grpc.WithBalancerName(roundrobin.Name),
-	//grpc.WithBalancer(grpc.RoundRobin(r)),
 	//grpc.WithBlock(),
 	)
 	defer cc.Close()
