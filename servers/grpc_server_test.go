@@ -4,8 +4,6 @@ import (
 	"context"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/metadata"
-	"grpc-gw-test/cluster"
-	//"google.golang.org/grpc/balancer/roundrobin"
 	pb "grpc-gw-test/service_interfaces"
 	"testing"
 	"time"
@@ -28,15 +26,7 @@ func TestServeGRPC(t *testing.T) {
 func testGrpcClient(t *testing.T, address string) {
 	// Set up a connection to the server.
 
-	r := cluster.NewResolver("grpc-gw")
-	//r := &cluster.IResolver{RawAddr: "grpc-gw"}
-
-	b := grpc.RoundRobin(r)
-
-	//conn, err := grpc.Dial(address, grpc.WithInsecure())
-	conn, err := grpc.Dial("localhost:2378",
-						grpc.WithBalancer(b),
-							grpc.WithInsecure())
+	conn, err := grpc.Dial(address, grpc.WithInsecure())
 	if err != nil {
 		t.Errorf("Did not connect: %v", err)
 	}

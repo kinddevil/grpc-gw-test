@@ -2,15 +2,13 @@ package cluster
 
 import (
 	"context"
+	"go.etcd.io/etcd/mvcc/mvccpb"
 	"log"
+	"strings"
 	"time"
 
 	etcv3 "go.etcd.io/etcd/clientv3"
 	"google.golang.org/grpc/resolver"
-)
-
-const (
-	Schema = "/GRPC/ETCD"
 )
 
 var (
@@ -43,16 +41,13 @@ type etcdBuilder struct {
 }
 
 func (b *etcdBuilder) Build(target resolver.Target, cc resolver.ClientConn, opts resolver.BuildOption) (resolver.Resolver, error) {
-	log.Println(target.Endpoint)
-	log.Println(target.Scheme)
-
 	if cli == nil {
 		if err := initCli(b.targets); err != nil {
 			panic(err) // cannot create the etcd connection at bootstrap
 		}
 	}
 
-	key := target.Scheme + "/" + target.Endpoint
+	key := "/" + target.Scheme + "/" + target.Endpoint
 	addrListStr, err := getStrList(key) // {'x.x.x.x:xxxx', ...}
 	if err != nil {
 		panic(err) // cannot get server list at bootstrap
@@ -60,23 +55,18 @@ func (b *etcdBuilder) Build(target resolver.Target, cc resolver.ClientConn, opts
 
 	ctx, cancel := context.WithCancel(context.Background())
 	d := &etcdResolver{
-		ctx:                  ctx,
-		cancel:               cancel,
-		cc:                   cc,
+		ctx:    ctx,
+		cancel: cancel,
+		cc:     cc,
 	}
 
-
-	d.cc.NewAddress(string2Addr(addrListStr))
-	go d.watch(key)
+	addressList := string2Addr(addrListStr)
+	d.cc.NewAddress(addressList)
+	go d.watch(key, addressList)
 	return d, nil
 }
 
 func getStrList(key string) (targets []string, err error) {
-	cli, err := etcv3.New(etcv3.Config{
-		Endpoints:   targets,
-		DialTimeout: 2 * time.Second,
-	})
-
 	res, err := cli.Get(context.TODO(), key, etcv3.WithPrefix())
 	if err != nil {
 		return nil, err
@@ -95,7 +85,7 @@ func string2Addr(strList []string) (addrListObj []resolver.Address) {
 	return
 }
 
-func (b *etcdBuilder) Scheme() string { return Schema }
+func (b *etcdBuilder) Scheme() string { return SCHEMA }
 
 type etcdResolver struct {
 	ctx    context.Context
@@ -111,6 +101,30 @@ func (r *etcdResolver) Close() {
 
 }
 
-func (r *etcdResolver) watch(key string) {
+func (r *etcdResolver) watch(key string, addrList []resolver.Address) {
 
+	rch := cli.Watch(context.Background(), key, etcv3.WithPrefix())
+	// TODO close when existing
+	//close(rch)
+	for n := range rch {
+		for _, ev := range n.Events {
+			addr := strings.TrimPrefix(string(ev.Kv.Key), key)
+			switch ev.Type {
+			case mvccpb.PUT:
+				if !exist(addrList, addr) {
+					addrList = append(addrList, resolver.Address{Addr: addr})
+					r.cc.NewAddress(addrList)
+					//r.cc.UpdateState(resolver.State{Addresses: addrList})
+				}
+			case mvccpb.DELETE:
+				if s, ok := remove(addrList, addr); ok {
+					addrList = s
+					r.cc.NewAddress(addrList)
+					//r.cc.UpdateState(resolver.State{Addresses: addrList})
+				}
+			}
+			log.Printf("watch register servers %s %q : %q\n", ev.Type, ev.Kv.Key, ev.Kv.Value)
+			log.Printf("Update address list to %v", addrList)
+		}
+	}
 }
