@@ -2,26 +2,27 @@ package cluster
 
 import (
 	"context"
-	"fmt"
+	"errors"
 	etcv3 "go.etcd.io/etcd/clientv3"
 	"log"
 	"strings"
 	"time"
 )
 
-const (
-	SCHEMA          = "GRPC_V3_LB"
-	CLIENT_TIME_OUT = 5 // seconds
-)
+type RegisterService struct {
+	client *etcv3.Client
+	lease  *etcv3.LeaseKeepAliveResponse
+}
 
 /**
 	Register register service with name as prefix to etcd, multi etcd addr should use ; to split
 **/
-func Register(etcdAddr, name, addr string, ttl int64) error {
+func (s *RegisterService) Register(etcdAddr, name, addr string, ttl int64) error {
 	var err error
 
-	if cli == nil {
-		cli, err = etcv3.New(etcv3.Config{
+	// TODO not use global client
+	if s.client == nil {
+		s.client, err = etcv3.New(etcv3.Config{
 			Endpoints:   strings.Split(etcdAddr, ";"),
 			DialTimeout: CLIENT_TIME_OUT * time.Second,
 		})
@@ -30,67 +31,70 @@ func Register(etcdAddr, name, addr string, ttl int64) error {
 		}
 	}
 
-	ticker := time.NewTicker(time.Second * time.Duration(ttl - 2))
+	key := "/" + SCHEMA + "/" + name + "/" + addr
+	getResp, err := s.client.Get(context.Background(), key)
 
-	// TODO close at exist
-	go func() {
-		key := "/" + SCHEMA + "/" + name + "/" + addr
-		for {
-			getResp, err := cli.Get(context.Background(), key)
-			if err != nil {
-				log.Println(err)
-			} else if getResp.Count == 0 {
-				log.Printf("Init lease for key %v...", key)
-				err = withAlive(name, addr, ttl)
-				if err != nil {
-					log.Println(err)
-				}
-			} else {
-				//log.Printf("Lease key already exist %v", key)
-			}
-
-			<-ticker.C
+	if err != nil {
+		return err
+	} else if getResp.Count == 0 {
+		log.Printf("Init lease for key %v...", key)
+		leaseChan, err := s.withAlive(name, addr, ttl)
+		if err != nil {
+			return err
 		}
-	}()
+		go s.monitorLease(leaseChan)
+	} else {
+		// duplicated service
+		return errors.New("Service already exist " + key)
+	}
 
 	return nil
 }
 
-func withAlive(name string, addr string, ttl int64) error {
+func (s *RegisterService) withAlive(name string, addr string, ttl int64) (<-chan *etcv3.LeaseKeepAliveResponse, error) {
 	ctx := context.Background()
-	leaseResp, err := cli.Grant(ctx, ttl)
+	leaseResp, err := s.client.Grant(ctx, ttl)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	log.Printf("key:%v\n", "/"+SCHEMA+"/"+name+"/"+addr)
-	_, err = cli.Put(ctx, "/"+SCHEMA+"/"+name+"/"+addr, addr, etcv3.WithLease(leaseResp.ID))
+	log.Printf("register for key:%v\n", "/"+SCHEMA+"/"+name+"/"+addr)
+	_, err = s.client.Put(ctx, "/"+SCHEMA+"/"+name+"/"+addr, addr, etcv3.WithLease(leaseResp.ID))
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	ch, err := cli.KeepAlive(ctx, leaseResp.ID)
+	ch, err := s.client.KeepAlive(ctx, leaseResp.ID)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	go func() {
-		for {
-			ka := <-ch
-			fmt.Println("ttl:", ka.TTL)
+	return ch, nil
+}
+
+func (s *RegisterService) monitorLease(leaseChan <-chan *etcv3.LeaseKeepAliveResponse) {
+	// Fix bug of etcd queue is full
+	for {
+		if lease, ok := <-leaseChan; !ok {
+			break
+		} else {
+			s.lease = lease
 		}
-	} ()
-
-	return nil
+	}
 }
 
 /**
 UnRegister remove service from etcd
 */
-func UnRegister(name string, addr string) {
-	if cli != nil {
+func (s *RegisterService) UnRegister(name string, addr string) {
+	if s.client != nil {
+		ctx := context.Background()
+
+		if s.lease != nil {
+			s.client.Revoke(ctx, s.lease.ID)
+		}
 		key := "/" + SCHEMA + "/" + name + "/" + addr
-		if _, err := cli.Delete(context.Background(), key); err != nil {
+		if _, err := s.client.Delete(ctx, key); err != nil {
 			log.Printf("Delete etcd server config error %v for key %v", err, key)
 		}
 	}

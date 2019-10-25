@@ -46,10 +46,11 @@ func ServeGRPC(terminate chan<- CancelFun, cfgs *viper.Viper) {
 	)
 
 	// Register service
-	cluster.Register(etcdAddr, servName, addr, LB_TTL)
+	registerServer := &cluster.RegisterService{}
+	registerServer.Register(etcdAddr, servName, addr, LB_TTL)
 
 	terminate <- func() error {
-		cluster.UnRegister(servName, addr)
+		registerServer.UnRegister(servName, addr)
 		s.Stop()
 		return nil
 	}

@@ -3,6 +3,7 @@ package servers
 import (
 	"context"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/balancer/roundrobin"
 	"google.golang.org/grpc/metadata"
 	pb "grpc-gw-test/service_interfaces"
 	"testing"
@@ -26,7 +27,10 @@ func TestServeGRPC(t *testing.T) {
 func testGrpcClient(t *testing.T, address string) {
 	// Set up a connection to the server.
 
-	conn, err := grpc.Dial(address, grpc.WithInsecure())
+	conn, err := grpc.Dial(address,
+		grpc.WithInsecure(),
+		grpc.WithBalancerName(roundrobin.Name),
+	)
 	if err != nil {
 		t.Errorf("Did not connect: %v", err)
 	}

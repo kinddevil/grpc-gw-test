@@ -11,38 +11,35 @@ import (
 	"google.golang.org/grpc/resolver"
 )
 
-var (
-	cli *etcv3.Client
+const (
+	SCHEMA          = "GRPC_V3_LB"
+	CLIENT_TIME_OUT = 5 // seconds
 )
 
 func NewBuilder(targets []string) resolver.Builder {
-	if err := initCli(targets); err != nil {
+	if cli, err := initCli(targets); err != nil {
 		panic(err)
+	} else {
+		return &etcdBuilder{targets: targets, client: cli}
 	}
-	return &etcdBuilder{targets: targets}
 }
 
-func initCli(targets []string) error {
-	if cli == nil {
-		var err error
-		cli, err = etcv3.New(etcv3.Config{
-			Endpoints:   targets,
-			DialTimeout: CLIENT_TIME_OUT * time.Second,
-		})
-		if err != nil {
-			return err
-		}
-	}
-	return nil
+func initCli(targets []string) (*etcv3.Client, error) {
+	return etcv3.New(etcv3.Config{
+		Endpoints:   targets,
+		DialTimeout: CLIENT_TIME_OUT * time.Second,
+	})
 }
 
 type etcdBuilder struct {
 	targets []string // register cluster address
+	client  *etcv3.Client
 }
 
 func (b *etcdBuilder) Build(target resolver.Target, cc resolver.ClientConn, opts resolver.BuildOption) (resolver.Resolver, error) {
-	if cli == nil {
-		if err := initCli(b.targets); err != nil {
+	if b.client == nil {
+		var err error
+		if b.client, err = initCli(b.targets); err != nil {
 			panic(err) // cannot create the etcd connection at bootstrap
 		}
 	}
@@ -50,24 +47,26 @@ func (b *etcdBuilder) Build(target resolver.Target, cc resolver.ClientConn, opts
 	ctx, cancel := context.WithCancel(context.Background())
 
 	key := "/" + target.Scheme + "/" + target.Endpoint
-	addrListStr, err := getStrList(key) // {'x.x.x.x:xxxx', ...}
+	addrListStr, err := getStrList(key, b.client) // {'x.x.x.x:xxxx', ...}
 	if err != nil {
 		panic(err) // cannot get server list at bootstrap
 	}
+
+	addressList := string2Addr(addrListStr)
 
 	d := &etcdResolver{
 		ctx:    ctx,
 		cancel: cancel,
 		cc:     cc,
+		client: b.client,
 	}
 
-	addressList := string2Addr(addrListStr)
 	d.cc.UpdateState(resolver.State{Addresses: addressList})
 	go d.watch(key, addressList)
 	return d, nil
 }
 
-func getStrList(key string) (targets []string, err error) {
+func getStrList(key string, cli *etcv3.Client) (targets []string, err error) {
 	res, err := cli.Get(context.Background(), key, etcv3.WithPrefix())
 	if err != nil {
 		return nil, err
@@ -92,20 +91,22 @@ type etcdResolver struct {
 	ctx    context.Context
 	cancel context.CancelFunc
 	cc     resolver.ClientConn
+	client *etcv3.Client
 }
 
 func (r *etcdResolver) ResolveNow(resolver.ResolveNowOption) {}
 
 func (r *etcdResolver) Close() {
 	r.cancel()
-	cli.Close()
+	r.client.Close()
 }
 
 func (r *etcdResolver) watch(key string, addrList []resolver.Address) {
 
-	rch := cli.Watch(r.ctx, key, etcv3.WithPrefix())
+	rch := r.client.Watch(r.ctx, key, etcv3.WithPrefix())
 	for n := range rch {
 		for _, ev := range n.Events {
+			// Cannot use string(ev.Kv.Value) for delete
 			addr := strings.TrimPrefix(string(ev.Kv.Key), key)
 			switch ev.Type {
 			case mvccpb.PUT:
@@ -120,7 +121,7 @@ func (r *etcdResolver) watch(key string, addrList []resolver.Address) {
 				}
 			}
 			//log.Printf("watch register servers %s %q : %q\n", ev.Type, ev.Kv.Key, ev.Kv.Value)
-			log.Printf("Update address list type %s key %q : %q to %v", ev.Type, ev.Kv.Key, addrList)
+			log.Printf("Update address list type %s key %q : %q to %v", ev.Type, ev.Kv.Key, ev.Kv.Value, addrList)
 		}
 	}
 }

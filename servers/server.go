@@ -22,10 +22,10 @@ var (
 			Name:   "grpc",
 			Server: ServeGRPC,
 		},
-		//{
-		//	Name:   "rest",
-		//	Server: ServeHttp,
-		//},
+		{
+			Name:   "rest",
+			Server: ServeHttp,
+		},
 	}
 )
 

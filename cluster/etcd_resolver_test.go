@@ -2,40 +2,71 @@ package cluster
 
 import (
 	"context"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/balancer/roundrobin"
+	etcv3 "go.etcd.io/etcd/clientv3"
 	"google.golang.org/grpc/resolver"
-	"log"
 	"testing"
 	"time"
-
-	pb "grpc-gw-test/service_interfaces"
 )
 
+type ClientConnMock struct {
+	addresses     []resolver.Address
+	serviceConfig string
+}
+
+func (c *ClientConnMock) UpdateState(state resolver.State) {
+	c.addresses = state.Addresses
+}
+
+func (c *ClientConnMock) NewAddress(addresses []resolver.Address) {
+	c.addresses = addresses
+}
+
+func (c *ClientConnMock) NewServiceConfig(serviceConfig string) {
+	c.serviceConfig = serviceConfig
+}
+
 func TestResolve(t *testing.T) {
+	etcdServer := "localhost:2379"
+	//resolver.Register(NewBuilder([]string{etcdServer}))
 
-	resolver.Register(NewBuilder([]string{"localhost:2379"}))
+	testBuilder := NewBuilder([]string{etcdServer})
+	testEndpoint := "testEnd"
+	target := &resolver.Target{Scheme: testBuilder.Scheme(), Endpoint: testEndpoint}
 
-	resolver.SetDefaultScheme(SCHEMA)
+	clientConn := &ClientConnMock{}
+	buildOpt := &resolver.BuildOption{}
 
-	cc, err := grpc.Dial(
-		SCHEMA+":///grpc-gw/",
-		grpc.WithInsecure(),
-		grpc.WithBalancerName(roundrobin.Name),
-	//grpc.WithBlock(),
-	)
-	defer cc.Close()
-	log.Printf("test reolve connection %v, error %v", cc, err)
+	// Test resolver builder
+	testResolver, err := testBuilder.Build(*target, clientConn, *buildOpt)
+	defer testResolver.Close()
 
-	ctx := context.TODO()
-	//ctx, cancel := context.WithTimeout(context.Background(), time.Second)
-	//defer cancel()
+	if err != nil {
+		t.Error("resolver builder should build a non-empty resolver...", err)
+	}
+	if len(clientConn.addresses) != 0 {
+		t.Error("Should have no address info, get ", clientConn.addresses)
+	}
 
-	for i := 0; i < 1002; i++ {
-		c := pb.NewSampleServiceClient(cc)
+	etcdClient, err := etcv3.New(etcv3.Config{
+		Endpoints:   []string{etcdServer},
+		DialTimeout: 1 * time.Second,
+	})
+	if err != nil {
+		t.Error("Cannot connect to etcd...", err)
+	}
 
-		ret, err := c.Sample(ctx, &pb.Request{Id: "5", Name: "anonymous"})
-		log.Printf("get ret %v with error %v", ret, err)
-		time.Sleep(2 * time.Second)
+	key := "/" + testBuilder.Scheme() + "/" + testEndpoint + "/"
+	// Test adding server
+	etcdClient.Put(context.TODO(), key, "someval")
+	time.Sleep(500 * time.Microsecond)
+	if len(clientConn.addresses) != 1 {
+		t.Error("Should have only 1 address info, get ", clientConn.addresses)
+	}
+
+	// Test deleting server
+	etcdClient.Delete(context.TODO(), key)
+	time.Sleep(500 * time.Microsecond)
+	if len(clientConn.addresses) != 0 {
+		t.Error("Should have no address info after delete, get ", clientConn.addresses)
 	}
 }
