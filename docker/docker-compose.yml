@@ -1,9 +1,25 @@
 version: '3'
 services:
-  docker-service:
+  grpc-gateway-service:
     build: .
     image: awesome-service
     container_name: awesome-service-container
+    networks:
+      - grpcgw
     ports:
       - 50051:50051
       - 8081:8081
+  etcd-server:
+    image: bitnami/etcd
+    container_name: etcd-server
+    networks:
+      - grpcgw
+    ports:
+      - 2379:2379
+      - 2380:2380
+    environment:
+      - ALLOW_NONE_AUTHENTICATION=yes
+      - ETCD_ADVERTISE_CLIENT_URLS=http://etcd-server:2379
+
+networks:
+  grpcgw:

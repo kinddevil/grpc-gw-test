@@ -27,7 +27,7 @@ func ServeGRPC(terminate chan<- CancelFun, cfgs *viper.Viper) {
 	maxConnIdle := cfgs.GetInt("grpc.max_connection_idle")
 	timeOut := cfgs.GetInt("grpc.time_out")
 
-	etcdAddr := cfgs.GetString("common.etcd_addrs")
+	etcdAddr := cfgs.GetString("common.register_etcd_service")
 	servName := cfgs.GetString("common.service_name")
 
 	lis, err := net.Listen("tcp", grpcPort)

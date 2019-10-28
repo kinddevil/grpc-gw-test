@@ -1,3 +1,7 @@
+common:
+  service_name: "grpc-gw"
+  register_etcd_service: "127.0.0.1:2379"
+
 grpc:
   port: ":50051"
   max_connection_idle: 300 #seconds
