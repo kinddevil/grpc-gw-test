@@ -12,7 +12,7 @@ import "google/api/annotations.proto";
 service SampleService {
     rpc Sample (Request) returns (Reply) {
         option (google.api.http) = {
-          post: "/v1/score"
+          post: "/v1/sample"
           body: "*"
         };
     }

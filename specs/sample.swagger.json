@@ -15,7 +15,7 @@
     "application/json"
   ],
   "paths": {
-    "/v1/score": {
+    "/v1/sample": {
       "post": {
         "operationId": "Sample",
         "responses": {
