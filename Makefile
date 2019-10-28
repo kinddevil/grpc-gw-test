@@ -11,6 +11,7 @@ test:
 	docker ps | grep "bitnami/etcd\|etcd-server" || docker run -d --name etcd-server -p 2379:2379 -p 2380:2380 -e ALLOW_NONE_AUTHENTICATION=yes -e ETCD_ADVERTISE_CLIENT_URLS=http://etcd-server:2379 bitnami/etcd
 	mkdir -p reports && go test -cover -coverprofile ./reports/cover.out ./...
 	go tool cover -html=./reports/cover.out -o ./reports/cover.html
+	docker rm -f etcd-server
 
 valid:
 	go vet -v ./...
