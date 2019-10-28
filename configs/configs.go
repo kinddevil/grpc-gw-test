@@ -8,8 +8,8 @@ import (
 var (
 	DEFAULT_CONFIGS = map[string]interface{}{
 		"common": map[string]interface{}{
-			"service_name": "grpc-gw",
-			"register_etcd_service":   "localhost:2379",
+			"service_name":          "grpc-gw",
+			"register_etcd_service": "localhost:2379",
 		},
 		"grpc": map[string]interface{}{
 			"host":                "127.0.0.1",
