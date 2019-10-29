@@ -49,3 +49,11 @@
 [[constraint]]
   name = "go.etcd.io/etcd"
   branch = "master"
+
+[[constraint]]
+  name = "github.com/grpc-ecosystem/go-grpc-prometheus"
+  branch = "master"
+
+[[constraint]]
+  name = "github.com/prometheus/client_golang"
+  branch = "master"

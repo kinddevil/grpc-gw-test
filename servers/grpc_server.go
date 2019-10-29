@@ -5,10 +5,13 @@ import (
 	"github.com/spf13/viper"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/keepalive"
+	"net/http"
 
+	"github.com/grpc-ecosystem/go-grpc-prometheus"
 	"grpc-gw-test/cluster"
 	"grpc-gw-test/inspectors"
 	pb "grpc-gw-test/service_interfaces"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"grpc-gw-test/services"
 	"log"
 	"net"
@@ -44,7 +47,13 @@ func ServeGRPC(terminate chan<- CancelFun, cfgs *viper.Viper) {
 		grpc.UnaryInterceptor(
 			inspectors.MiddlewareFunc(inspectors.GetUserInfo),
 		),
+		grpc.StreamInterceptor(grpc_prometheus.StreamServerInterceptor),
+		grpc.UnaryInterceptor(grpc_prometheus.UnaryServerInterceptor),
 	)
+
+	// Register prometheus and open http port for scraping
+	grpc_prometheus.Register(s)
+	http.Handle("/metrics", promhttp.Handler())
 
 	// Register service
 	registerServer := &cluster.RegisterService{}

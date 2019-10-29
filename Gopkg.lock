@@ -2,6 +2,14 @@
 
 
 [[projects]]
+  digest = "1:d6afaeed1502aa28e80a4ed0981d570ad91b2579193404256ce672ed0a609e0d"
+  name = "github.com/beorn7/perks"
+  packages = ["quantile"]
+  pruneopts = "UT"
+  revision = "37c8de3658fcb183f997c4e13e8337516ab753e6"
+  version = "v1.0.1"
+
+[[projects]]
   digest = "1:bcf36df8d43860bfde913d008301aef27c6e9a303582118a837c4a34c0d18167"
   name = "github.com/coreos/go-systemd"
   packages = ["journal"]
@@ -67,6 +75,14 @@
   version = "v1.1.1"
 
 [[projects]]
+  digest = "1:9b7a07ac7577787a8ecc1334cb9f34df1c76ed82a917d556c5713d3ab84fbc43"
+  name = "github.com/grpc-ecosystem/go-grpc-prometheus"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "c225b8c3b01faf2899099b768856a9e916e5087b"
+  version = "v1.2.0"
+
+[[projects]]
   digest = "1:99a9eab89cf8193a246811614678f34432e95446c34142594c450acb1a7a31cc"
   name = "github.com/grpc-ecosystem/grpc-gateway"
   packages = [
@@ -106,6 +122,14 @@
   version = "v1.8.1"
 
 [[projects]]
+  digest = "1:ff5ebae34cfbf047d505ee150de27e60570e8c394b3b8fdbb720ff6ac71985fc"
+  name = "github.com/matttproud/golang_protobuf_extensions"
+  packages = ["pbutil"]
+  pruneopts = "UT"
+  revision = "c12348ce28de40eed0136aa2b644d0ee0650e56c"
+  version = "v1.0.1"
+
+[[projects]]
   digest = "1:53bc4cd4914cd7cd52139990d5170d6dc99067ae31c56530621b18b35fc30318"
   name = "github.com/mitchellh/mapstructure"
   packages = ["."]
@@ -120,6 +144,49 @@
   pruneopts = "UT"
   revision = "728039f679cbcd4f6a54e080d2219a4c4928c546"
   version = "v1.4.0"
+
+[[projects]]
+  digest = "1:7097829edd12fd7211fca0d29496b44f94ef9e6d72f88fb64f3d7b06315818ad"
+  name = "github.com/prometheus/client_golang"
+  packages = [
+    "prometheus",
+    "prometheus/internal",
+  ]
+  pruneopts = "UT"
+  revision = "170205fb58decfd011f1550d4cfb737230d7ae4f"
+  version = "v1.1.0"
+
+[[projects]]
+  branch = "master"
+  digest = "1:2d5cd61daa5565187e1d96bae64dbbc6080dacf741448e9629c64fd93203b0d4"
+  name = "github.com/prometheus/client_model"
+  packages = ["go"]
+  pruneopts = "UT"
+  revision = "14fe0d1b01d4d5fc031dd4bec1823bd3ebbe8016"
+
+[[projects]]
+  digest = "1:f119e3205d3a1f0f19dbd7038eb37528e2c6f0933269dc344e305951fb87d632"
+  name = "github.com/prometheus/common"
+  packages = [
+    "expfmt",
+    "internal/bitbucket.org/ww/goautoneg",
+    "model",
+  ]
+  pruneopts = "UT"
+  revision = "287d3e634a1e550c9e463dd7e5a75a422c614505"
+  version = "v0.7.0"
+
+[[projects]]
+  digest = "1:a210815b437763623ecca8eb91e6a0bf4f2d6773c5a6c9aec0e28f19e5fd6deb"
+  name = "github.com/prometheus/procfs"
+  packages = [
+    ".",
+    "internal/fs",
+    "internal/util",
+  ]
+  pruneopts = "UT"
+  revision = "499c85531f756d1129edd26485a5f73871eeb308"
+  version = "v0.0.5"
 
 [[projects]]
   digest = "1:bb495ec276ab82d3dd08504bbc0594a65de8c3b22c6f2aaa92d05b73fbf3a82e"
@@ -240,9 +307,12 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:31ca8823684b4b0c204df1d4a9f3c511f41cc3e7ab6decc2ca5ffacc358d2818"
+  digest = "1:b81809747cfe3b745ecbb83859f2ac3566170d5a67aa96c458aa0afeefd93200"
   name = "golang.org/x/sys"
-  packages = ["unix"]
+  packages = [
+    "unix",
+    "windows",
+  ]
   pruneopts = "UT"
   revision = "c3b328c6e5a763a2bfc82a48b4bd855037210934"
 
@@ -340,6 +410,7 @@
   input-imports = [
     "github.com/golang/protobuf/proto",
     "github.com/google/uuid",
+    "github.com/grpc-ecosystem/go-grpc-prometheus",
     "github.com/grpc-ecosystem/grpc-gateway/runtime",
     "github.com/grpc-ecosystem/grpc-gateway/utilities",
     "github.com/spf13/viper",
