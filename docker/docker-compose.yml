@@ -10,7 +10,7 @@ services:
       - 50051:50051
       - 8081:8081
   etcd-server:
-    image: bitnami/etcd
+    image: bitnami/etcd:latest
     container_name: etcd-server
     networks:
       - grpcgw
@@ -20,6 +20,16 @@ services:
     environment:
       - ALLOW_NONE_AUTHENTICATION=yes
       - ETCD_ADVERTISE_CLIENT_URLS=http://etcd-server:2379
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    networks:
+      - grpcgw
+    ports:
+      - 9090:9090
+    volumes:
+      - ../prometheus.yml:/etc/prometheus/prometheus.yml
 
 networks:
   grpcgw:
