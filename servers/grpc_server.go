@@ -2,17 +2,17 @@ package servers
 
 import (
 	"fmt"
+	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/spf13/viper"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/keepalive"
+	"grpc-gw-test/inspectors"
 	"net/http"
 
-	"github.com/grpc-ecosystem/go-grpc-middleware"
 	"github.com/grpc-ecosystem/go-grpc-prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"grpc-gw-test/cluster"
-	"grpc-gw-test/inspectors"
 	pb "grpc-gw-test/service_interfaces"
 	"grpc-gw-test/services"
 	"log"
@@ -41,28 +41,6 @@ func ServeGRPC(terminate chan<- CancelFun, cfgs *viper.Viper) {
 		log.Fatalf("failed to listen: %v", err)
 	}
 
-	s := grpc.NewServer(
-		grpc.KeepaliveParams(keepalive.ServerParameters{
-			MaxConnectionIdle: time.Duration(maxConnIdle) * time.Second,
-			Timeout:           time.Duration(timeOut) * time.Second,
-		}),
-		grpc.UnaryInterceptor(
-			grpc_middleware.ChainUnaryServer(
-				inspectors.MiddlewareFunc(inspectors.GetUserInfo),
-				grpc_prometheus.UnaryServerInterceptor,
-			),
-		),
-		grpc.StreamInterceptor(
-			grpc_middleware.ChainStreamServer(
-				grpc_prometheus.StreamServerInterceptor,
-			),
-		),
-	)
-
-	// Register prometheus and open http port for scraping
-	// TODO abstract metrics logic
-	grpc_prometheus.Register(s)
-	http.Handle("/metrics", promhttp.Handler())
 	reg := prometheus.NewRegistry()
 	grpcMetrics := grpc_prometheus.NewServerMetrics()
 	customizedCounterMetric := prometheus.NewCounterVec(prometheus.CounterOpts{
@@ -70,6 +48,28 @@ func ServeGRPC(terminate chan<- CancelFun, cfgs *viper.Viper) {
 		Help: "Total number of RPCs handled on the server.",
 	}, []string{"name"})
 	reg.MustRegister(grpcMetrics, customizedCounterMetric)
+
+	s := grpc.NewServer(
+		grpc.KeepaliveParams(keepalive.ServerParameters{
+			MaxConnectionIdle: time.Duration(maxConnIdle) * time.Second,
+			Timeout:           time.Duration(timeOut) * time.Second,
+		}),
+		grpc.UnaryInterceptor(
+			grpc_middleware.ChainUnaryServer(
+				grpcMetrics.UnaryServerInterceptor(),
+				inspectors.MiddlewareFunc(inspectors.GetUserInfo),
+			),
+		),
+		grpc.StreamInterceptor(
+			grpc_middleware.ChainStreamServer(
+				grpcMetrics.StreamServerInterceptor(),
+			),
+		),
+	)
+
+	// Register prometheus and open http port for scraping
+	// TODO abstract metrics logic
+	grpcMetrics.InitializeMetrics(s)
 	// TODO config port
 	httpServer := &http.Server{Handler: promhttp.HandlerFor(reg, promhttp.HandlerOpts{}), Addr: fmt.Sprintf("0.0.0.0:%d", 9092)}
 
