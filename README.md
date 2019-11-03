@@ -1,2 +1,1 @@
-# grpc-gw-test
-[![CircleCI](https://circleci.com/gh/kinddevil/grpc-gw-test.svg?style=shield)](https://circleci.com/gh/kinddevil/grpc-gw-test)
+# grpc-gw-test [![CircleCI](https://circleci.com/gh/kinddevil/grpc-gw-test.svg?style=shield)](https://circleci.com/gh/kinddevil/grpc-gw-test) [![MIT license](http://img.shields.io/badge/license-Apache2.0-brightgreen.svg)](https://opensource.org/licenses/Apache-2.0)
