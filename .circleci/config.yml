@@ -29,8 +29,9 @@ jobs:
       - run:
           name: Download packages
           command: |
-#            dep ensure
             go mod tidy
+#            dep ensure
+
 
       - save_cache:
           key: gopkg-{{ .Branch }}-{{ checksum "Gopkg.lock" }}
