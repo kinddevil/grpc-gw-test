@@ -30,11 +30,13 @@ jobs:
           name: Download packages
           command: |
             go mod tidy
+            go mod vendor
 #            dep ensure
 
 
       - save_cache:
-          key: gopkg-{{ .Branch }}-{{ checksum "Gopkg.lock" }}
+#          key: gopkg-{{ .Branch }}-{{ checksum "Gopkg.lock" }}
+          key: gopkg-{{ .Branch }}-{{ checksum "go.sum" }}
           paths:
             - /go/src/grpc-gw-test/vendor
 
