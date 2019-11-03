@@ -9,7 +9,8 @@ jobs:
       - image: circleci/golang:1.12
         environment:
           - GOCACHE: "/tmp/go/cache"
-          - DEP_VERSION: 0.5.4
+#          - DEP_VERSION: 0.5.4
+          - GO111MODULE: "on"
 
       - image: bitnami/etcd:latest
         environment:
@@ -28,7 +29,8 @@ jobs:
       - run:
           name: Download packages
           command: |
-            dep ensure
+#            dep ensure
+            mod tidy
 
       - save_cache:
           key: gopkg-{{ .Branch }}-{{ checksum "Gopkg.lock" }}
