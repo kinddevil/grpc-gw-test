@@ -9,6 +9,7 @@ services:
     ports:
       - 50051:50051
       - 8081:8081
+      - 9092:9092
   etcd-server:
     image: bitnami/etcd:latest
     container_name: etcd-server

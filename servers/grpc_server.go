@@ -43,11 +43,8 @@ func ServeGRPC(terminate chan<- CancelFun, cfgs *viper.Viper) {
 
 	reg := prometheus.NewRegistry()
 	grpcMetrics := grpc_prometheus.NewServerMetrics()
-	customizedCounterMetric := prometheus.NewCounterVec(prometheus.CounterOpts{
-		Name: "demo_server_say_hello_method_handle_count",
-		Help: "Total number of RPCs handled on the server.",
-	}, []string{"name"})
-	reg.MustRegister(grpcMetrics, customizedCounterMetric)
+	grpcMetrics.EnableHandlingTimeHistogram()
+	reg.MustRegister(grpcMetrics)
 
 	s := grpc.NewServer(
 		grpc.KeepaliveParams(keepalive.ServerParameters{
