@@ -2,8 +2,9 @@ package servers
 
 import (
 	"context"
+	"github.com/bsm/grpclb"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/balancer/roundrobin"
+	"google.golang.org/grpc/balancer"
 	"google.golang.org/grpc/metadata"
 	pb "grpc-gw-test/service_interfaces"
 	"testing"
@@ -27,9 +28,17 @@ func TestServeGRPC(t *testing.T) {
 func testGrpcClient(t *testing.T, address string) {
 	// Set up a connection to the server.
 
+	// Self defined balancer
+	//localLB := grpclb.PickFirst(&grpclb.Options{
+	//	Address: "127.0.0.1:8383",
+	//})
+	//balancer.Register(xxx)
+
 	conn, err := grpc.Dial(address,
 		grpc.WithInsecure(),
-		grpc.WithBalancerName(roundrobin.Name),
+		//grpc.WithBalancerName(roundrobin.Name),
+		//grpc.WithBalancer(localLB),
+		grpc.WithDefaultServiceConfig(`{"loadBalancingPolicy":"round_robin"}`),
 	)
 	if err != nil {
 		t.Errorf("Did not connect: %v", err)
