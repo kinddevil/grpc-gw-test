@@ -3,16 +3,12 @@ package servers
 import (
 	"fmt"
 	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
-	"github.com/prometheus/client_golang/prometheus"
+	"github.com/grpc-ecosystem/go-grpc-prometheus"
 	"github.com/spf13/viper"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/keepalive"
-	"grpc-gw-test/inspectors"
-	"net/http"
-
-	"github.com/grpc-ecosystem/go-grpc-prometheus"
-	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"grpc-gw-test/cluster"
+	"grpc-gw-test/inspectors"
 	pb "grpc-gw-test/service_interfaces"
 	"grpc-gw-test/services"
 	"log"
@@ -41,10 +37,7 @@ func ServeGRPC(terminate chan<- CancelFun, cfgs *viper.Viper) {
 		log.Fatalf("failed to listen: %v", err)
 	}
 
-	reg := prometheus.NewRegistry()
 	grpcMetrics := grpc_prometheus.NewServerMetrics()
-	grpcMetrics.EnableHandlingTimeHistogram()
-	reg.MustRegister(grpcMetrics)
 
 	s := grpc.NewServer(
 		grpc.KeepaliveParams(keepalive.ServerParameters{
@@ -64,18 +57,10 @@ func ServeGRPC(terminate chan<- CancelFun, cfgs *viper.Viper) {
 		),
 	)
 
-	// Register prometheus and open http port for scraping
-	// TODO abstract metrics logic
+	// Setup metrics
+	grpcMetrics.EnableHandlingTimeHistogram()
+	promRegistry.MustRegister(grpcMetrics)
 	grpcMetrics.InitializeMetrics(s)
-	// TODO config port
-	httpServer := &http.Server{Handler: promhttp.HandlerFor(reg, promhttp.HandlerOpts{}), Addr: fmt.Sprintf("0.0.0.0:%d", 9092)}
-
-	go func() {
-		if err := httpServer.ListenAndServe(); err != nil {
-			log.Fatal("Unable to start a http server.")
-		}
-	}()
-	// TODO end
 
 	// Register service
 	registerServer := &cluster.RegisterService{}
@@ -84,7 +69,6 @@ func ServeGRPC(terminate chan<- CancelFun, cfgs *viper.Viper) {
 	terminate <- func() error {
 		registerServer.UnRegister(servName, addr)
 		s.Stop()
-		httpServer.Close()
 		return nil
 	}
 

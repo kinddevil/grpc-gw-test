@@ -1,6 +1,8 @@
 common:
   service_name: "grpc-gw"
   register_etcd_service: "127.0.0.1:2379"
+  prom:
+    port: ":9092"
 
 grpc:
   port: ":50051"

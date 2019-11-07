@@ -14,8 +14,7 @@ func ServeHttp(terminate chan<- func() error, cfgs *viper.Viper) {
 	restPort := cfgs.GetString("rest.port")
 	grpcServerEndpoint := cfgs.GetString("rest.grpc_addr")
 
-	ctx := context.Background()
-	ctx, cancel := context.WithCancel(ctx)
+	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
 	// Register gRPC server endpoint
