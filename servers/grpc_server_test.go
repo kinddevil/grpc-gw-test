@@ -2,9 +2,9 @@ package servers
 
 import (
 	"context"
-	"github.com/bsm/grpclb"
+	//"github.com/bsm/grpclb"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/balancer"
+	//"google.golang.org/grpc/balancer"
 	"google.golang.org/grpc/metadata"
 	pb "grpc-gw-test/service_interfaces"
 	"testing"
