@@ -28,7 +28,7 @@ var (
 		},
 		{
 			Name:   "prometheus",
-			Server: ServerProm,
+			Server: ServeProm,
 		},
 	}
 )

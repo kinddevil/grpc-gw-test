@@ -13,7 +13,7 @@ var (
 	promRegistry = prometheus.NewRegistry()
 )
 
-func ServerProm(terminate chan<- CancelFun, cfgs *viper.Viper) {
+func ServeProm(terminate chan<- CancelFun, cfgs *viper.Viper) {
 	promPort := cfgs.GetString("common.prom.port")
 
 	ctx, cancel := context.WithCancel(context.Background())
@@ -32,7 +32,7 @@ func ServerProm(terminate chan<- CancelFun, cfgs *viper.Viper) {
 	log.Printf("start prometheus service with %v", promPort)
 	go func() {
 		if err := httpServer.ListenAndServe(); err != nil {
-			log.Fatal("Unable to start a http server for prometheus.")
+			log.Printf("Unable to start a http server for prometheus.")
 		}
 	}()
 }
